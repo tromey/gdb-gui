@@ -16,9 +16,11 @@
 # Source view.
 
 import gdb
+from gui.invoker import Invoker
 import gui.startup
-import gtksourceview2 as gtksourceview
-import gtk
+import os.path
+
+from gi.repository import Gtk, GtkSource, GObject
 
 class BufferManager:
     def __init__(self):
@@ -32,7 +34,7 @@ class BufferManager:
         if filename in self.buffers:
             return self.buffers[filename]
 
-        buff = gtksourceview.Buffer()
+        buff = GtkSource.Buffer()
         buff.begin_not_undoable_action()
         try:
             contents = open(filename).read()
@@ -142,29 +144,24 @@ class SourceWindow:
     def __init__(self):
         self.frame = None
 
-        # FIXME: set the size
-        # stuff in margins
-        self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-        self.window.set_border_width(0)
-        self.window.set_title('GDB Source')
-        self.window.set_size_request(600, 400)
+        self.do_step = Invoker("step")
+        self.do_next = Invoker("next")
+        self.do_continue = Invoker("continue")
 
-        vbox = gtk.VBox(0, False)
-        swin = gtk.ScrolledWindow()
-        self.view = gtksourceview.View()
-        self.view.set_editable(False)
-        self.view.set_cursor_visible(False)
-        self.view.set_highlight_current_line(True)
-        self.window.add(vbox)
-        vbox.pack_start(swin, True, True, 0)
-        swin.add(self.view)
+        builder = Gtk.Builder()
+        builder.add_from_file(os.path.join(gui.self_dir, 'sourcewindow.xml'))
 
-        vbox.show_all()
+        builder.connect_signals(self)
+        self.window = builder.get_object("sourcewindow")
+        self.view = builder.get_object("view")
 
-        self.window.connect("delete-event", self.deleted)
         lru_handler.add(self)
 
         self.window.show()
+
+    def do_stop(self, *args):
+        # FIXME.
+        pass
 
     def deleted(self, widget, event):
         lru_handler.remove(self)
@@ -180,5 +177,5 @@ class SourceWindow:
             old_buffer = self.view.get_buffer()
             self.view.set_buffer(buff)
             buffer_manager.release_buffer(old_buffer)
-            gtk.idle_add(self._do_scroll, buff, srcline - 1)
+            GObject.idle_add(self._do_scroll, buff, srcline - 1)
             # self.view.scroll_to_iter(buff.get_iter_at_line(srcline), 0.0)

@@ -20,8 +20,8 @@ import Queue
 import fix_signals
 fix_signals.save()
 
-import gtk
-import glib
+from gi.repository import Gtk, Gdk, GObject, GtkSource
+
 import os
 
 (read_pipe, write_pipe) = os.pipe()
@@ -43,15 +43,17 @@ class _GtkThread(threading.Thread):
 
     def run(self):
         global read_pipe
-        glib.io_add_watch(read_pipe, glib.IO_IN, self.handle_queue)
-        gtk.main()
+        GObject.io_add_watch(read_pipe, GObject.IO_IN, self.handle_queue)
+        GObject.type_register(GtkSource.View)
+        Gtk.main()
 
 _t = None
 
 def start_gtk():
     global _t
     if _t is None:
-        gtk.gdk.threads_init()
+        GObject.threads_init()
+        Gdk.threads_init()
         _t = _GtkThread()
         _t.setDaemon(True)
         _t.start()

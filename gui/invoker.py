@@ -13,6 +13,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os.path
+import gdb
 
-self_dir = os.path.abspath(os.path.dirname(__file__))
+class Invoker(object):
+    """A simple class that can invoke a gdb command.
+    This is suitable for use as an event handler in Gtk."""
+
+    def __init__(self, cmd):
+        self.cmd = cmd
+
+    # This is invoked in the gdb thread to run the command.
+    def do_call(self):
+        gdb.execute(self.cmd, from_tty = True, to_string = True)
+
+    # The object itself is the Gtk event handler.
+    def __call__(self, *args):
+        gdb.post_event(self.do_call)

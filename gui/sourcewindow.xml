@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <!-- interface-requires gtk+ 3.0 -->
+  <!-- interface-requires gtksourceview 3.0 -->
+  <object class="GtkImage" id="image1">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">icons/run-to-cursor.xpm</property>
+  </object>
+  <object class="GtkImage" id="image2">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">icons/step-over.xpm</property>
+  </object>
+  <object class="GtkImage" id="image3">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">icons/step-into.xpm</property>
+  </object>
+  <object class="GtkWindow" id="sourcewindow">
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Source</property>
+    <property name="default_width">600</property>
+    <property name="default_height">400</property>
+    <signal name="delete-event" handler="deleted" swapped="no"/>
+    <child>
+      <object class="GtkBox" id="box1">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkToolbar" id="toolbar1">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkToolButton" id="continue">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Continue execution</property>
+                <property name="label" translatable="yes">Continue</property>
+                <property name="use_underline">True</property>
+                <property name="icon_widget">image1</property>
+                <accelerator key="c" signal="clicked"/>
+                <signal name="clicked" handler="do_continue" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="next">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Execute one line, stepping over function calls</property>
+                <property name="label" translatable="yes">Next</property>
+                <property name="use_underline">True</property>
+                <property name="icon_widget">image2</property>
+                <accelerator key="n" signal="clicked"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="step">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Execute one line, stepping into function calls</property>
+                <property name="label" translatable="yes">Step</property>
+                <property name="use_underline">True</property>
+                <property name="icon_widget">image3</property>
+                <accelerator key="s" signal="clicked"/>
+                <signal name="clicked" handler="do_step" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="stop">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Interrupt the program</property>
+                <property name="label" translatable="yes">Stop</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-stop</property>
+                <accelerator key="c" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
+                <signal name="clicked" handler="do_stop" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow" id="scrolledwindow2">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="shadow_type">in</property>
+            <child>
+              <object class="GtkSourceView" id="view">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="has_tooltip">True</property>
+                <property name="editable">False</property>
+                <property name="left_margin">2</property>
+                <property name="right_margin">2</property>
+                <property name="cursor_visible">False</property>
+                <property name="tab_width">4</property>
+                <property name="auto_indent">True</property>
+                <property name="highlight_current_line">True</property>
+                <property name="indent_on_tab">False</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
