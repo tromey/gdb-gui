@@ -108,6 +108,8 @@
                 <property name="label" translatable="yes">Finish</property>
                 <property name="use_underline">True</property>
                 <property name="icon_widget">image4</property>
+                <accelerator key="f" signal="clicked"/>
+                <signal name="clicked" handler="do_finish" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
