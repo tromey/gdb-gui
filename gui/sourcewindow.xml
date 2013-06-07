@@ -17,6 +17,11 @@
     <property name="can_focus">False</property>
     <property name="pixbuf">icons/step-into.xpm</property>
   </object>
+  <object class="GtkImage" id="image4">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">icons/step-out.xpm</property>
+  </object>
   <object class="GtkWindow" id="sourcewindow">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Source</property>
@@ -89,6 +94,20 @@
                 <property name="stock_id">gtk-stop</property>
                 <accelerator key="c" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
                 <signal name="clicked" handler="do_stop" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="finish">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Run until the current function returns</property>
+                <property name="label" translatable="yes">Finish</property>
+                <property name="use_underline">True</property>
+                <property name="icon_widget">image4</property>
               </object>
               <packing>
                 <property name="expand">False</property>

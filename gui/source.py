@@ -147,6 +147,8 @@ class SourceWindow:
         self.do_step = Invoker("step")
         self.do_next = Invoker("next")
         self.do_continue = Invoker("continue")
+        self.do_finish = Invoker("finish")
+        self.do_stop = Invoker("interrupt")
 
         builder = Gtk.Builder()
         builder.add_from_file(os.path.join(gui.self_dir, 'sourcewindow.xml'))
@@ -158,10 +160,6 @@ class SourceWindow:
         lru_handler.add(self)
 
         self.window.show()
-
-    def do_stop(self, *args):
-        # FIXME.
-        pass
 
     def deleted(self, widget, event):
         lru_handler.remove(self)
