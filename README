@@ -1,0 +1,33 @@
+gdb-gui
+
+This is gdb-gui, a GUI for gdb.  This GUI differs from existing gdb
+GUIs in a few ways:
+
+* It runs in-process.
+
+* It is written in Python.
+
+* It is intended to interoperate well with the CLI.
+  You can pick and choose which windows you want to see, and you can
+  still do whatever you like in the terminal.
+
+* It is totally incomplete.
+
+
+To get started, install the prerequisites.  You'll need a
+Python-enabled gdb, PyGtk, and PyGktSourceView.  (And maybe more -- if
+you trip across something, let me know.)  You'll need the Python
+development package to compile the small C module that is included
+here.
+
+On Fedora I think this suffices:
+
+    sudo yum install gdb python-devel pygtksourceview pygtk2
+
+After you install this, type "make".  Now, start gdb and source the
+"SourceMe.py" file.  This sets everything up.
+
+This adds a new "gui" command to gdb.  Currently the only subcommand
+is "gui source", which pops up a source window.  The source window
+will automatically track your progress when debugging.  You can make
+multiple source windows; they will be reused in an LRU fashion.
