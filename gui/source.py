@@ -147,6 +147,7 @@ class SourceWindow:
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.window.set_border_width(0)
         self.window.set_title('GDB Source')
+        self.window.set_size_request(600, 400)
 
         vbox = gtk.VBox(0, False)
         swin = gtk.ScrolledWindow()
