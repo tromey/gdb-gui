@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <!-- interface-requires gtk+ 3.0 -->
   <!-- interface-requires gtksourceview 3.0 -->
+  <!-- interface-requires gtk+ 3.0 -->
   <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -24,7 +24,7 @@
   </object>
   <object class="GtkWindow" id="sourcewindow">
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Source</property>
+    <property name="title" translatable="yes">GDB Source</property>
     <property name="default_width">600</property>
     <property name="default_height">400</property>
     <signal name="delete-event" handler="deleted" swapped="no"/>
