@@ -9,3 +9,10 @@ gui/fix_signals.so: gui/fix-signals.c
 
 clean:
 	-rm SourceMe.py gui/fix_signals.so
+
+hack-gdbinit:
+	if test -f $$HOME/.gdbinit && `grep -q SourceMe $$HOME/.gdbinit`; then \
+	  :; \
+	else \
+	  echo "source `pwd`/SourceMe.py" >> $$HOME/.gdbinit; \
+	fi
