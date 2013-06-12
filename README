@@ -29,10 +29,12 @@ After you install this, type "make".  Now, start gdb and source the
 always be available, you can use "make hack-gdbinit", which will add
 the appropriate "source" line to your ~/.gdbinit.
 
-This adds a new "gui" command to gdb.  Currently the only subcommand
-is "gui source", which pops up a source window.  The source window
-will automatically track your progress when debugging.  You can make
-multiple source windows; they will be reused in an LRU fashion.
+This adds a new "gui" command and various subcommands to gdb.
+
+A simple subcommand to try is "gui source", which pops up a source
+window.  The source window will automatically track your progress when
+debugging.  You can make multiple source windows; they will be reused
+in an LRU fashion.
 
 If you want to hack on this, you will need Glade to edit the UI
 elements.  For Fedora 18, you'll need a special hack to make the
