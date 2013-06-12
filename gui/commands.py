@@ -23,6 +23,11 @@ class GuiCommand(gdb.Command):
                                          prefix = True)
 
 class GuiSourceCommand(gdb.Command):
+    """Create a new source window.
+    Usage: gui source
+    This creates a new source window in the GUI.  Any number of source
+    windows can be created."""
+
     def __init__(self):
         super(GuiSourceCommand, self).__init__('gui source',
                                                gdb.COMMAND_SUPPORT)
