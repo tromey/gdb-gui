@@ -17,8 +17,10 @@
 
 import gdb
 from gui.invoker import Invoker
+from gui.toplevel import Toplevel
 import gui.startup
 import os.path
+import gui.toplevel
 
 from gi.repository import Gtk, GtkSource, GObject
 
@@ -140,8 +142,10 @@ class LRUHandler:
 
 lru_handler = LRUHandler()
 
-class SourceWindow:
+class SourceWindow(Toplevel):
     def __init__(self):
+        super(SourceWindow, self).__init__()
+
         self.frame = None
 
         self.do_step = Invoker("step")

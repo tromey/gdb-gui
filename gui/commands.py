@@ -28,6 +28,7 @@ class GuiSourceCommand(gdb.Command):
                                                gdb.COMMAND_SUPPORT)
 
     def invoke(self, arg, from_tty):
+        self.dont_repeat()
         gui.startup.start_gtk()
         gui.startup.send_to_gtk(gui.source.SourceWindow)
 
