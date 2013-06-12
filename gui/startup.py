@@ -28,7 +28,6 @@ import os
 
 _event_queue = Queue.Queue()
 
-# Some kind of currying would be nice.
 def send_to_gtk(func):
     _event_queue.put(func)
     os.write(write_pipe, 'x')
