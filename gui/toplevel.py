@@ -56,38 +56,18 @@ class _ToplevelState(object):
                     print ' %3d    %s' % (window.number,
                                           window.window.get_title())
 
-_toplevel_state = _ToplevelState()
+state = _ToplevelState()
 
 class Toplevel(object):
     def __init__(self):
-        _toplevel_state.add(self)
+        state.add(self)
         # The subclass must set this.
         self.window = None
 
     def destroy(self):
-        _toplevel_state.remove(self)
+        state.remove(self)
         gui.startup.send_to_gtk(self.window.destroy)
+        self.window = None
 
-class InfoWindowsCommand(gdb.Command):
-    def __init__(self):
-        super(InfoWindowsCommand, self).__init__('info windows',
-                                                 gdb.COMMAND_SUPPORT)
-
-    def invoke(self, arg, from_tty):
-        self.dont_repeat()
-        _toplevel_state.display()
-
-class DeleteWindowsCommand(gdb.Command):
-    def __init__(self):
-        super(DeleteWindowsCommand, self).__init__('delete window',
-                                                   gdb.COMMAND_SUPPORT)
-
-    def invoke(self, arg, from_tty):
-        self.dont_repeat()
-        winno = int(arg)
-        window = _toplevel_state.get(winno)
-        if window is not None:
-            window.destroy()
-
-InfoWindowsCommand()
-DeleteWindowsCommand()
+    def valid(self):
+        return self.window is not None

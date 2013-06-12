@@ -16,6 +16,10 @@
 import gdb
 import gui.startup
 import gui.source
+import gui.logwindow
+import gui.toplevel
+import gui.dprintf
+import re
 
 class GuiCommand(gdb.Command):
     def __init__(self):
@@ -37,5 +41,115 @@ class GuiSourceCommand(gdb.Command):
         gui.startup.start_gtk()
         gui.startup.send_to_gtk(gui.source.SourceWindow)
 
+class GuiLogWindowCommand(gdb.Command):
+    """Create a new log window.
+    Usage: gui log
+    This creates a new "log" window in the GUI.  A log window is used
+    to display output from "gui print", "gui printf", "gui output",
+    and "gui dprintf".
+
+    Multiple log windows can be created and output can be directed to
+    a given instance using the "@" syntax, like:
+
+        gui printf @5 "hello\n"
+    """
+
+    def __init__(self):
+        super(GuiLogWindowCommand, self).__init__('gui log',
+                                                  gdb.COMMAND_SUPPORT)
+
+    def invoke(self, arg, from_tty):
+        self.dont_repeat()
+        gui.startup.start_gtk()
+        window = gui.logwindow.LogWindow()
+        print "Created log window %d; now the default" % window.number
+
+class GuiPrintBase(gdb.Command):
+    def __init__(self, command):
+        super(GuiPrintBase, self).__init__('gui ' + command,
+                                           gdb.COMMAND_SUPPORT)
+        self.command = command
+
+    # Given ARG, return a pair (WINDOW, NEW_ARG).
+    def _parse_arg(self, arg, do_default = True):
+        arg = arg.strip()
+        match = re.match('@(\\d+)\\s+(.*)$', arg)
+        if match is not None:
+            winno = int(match.group(1))
+            arg = match.group(2)
+            window = gui.toplevel.state.get(winno)
+            if window is None:
+                raise gdb.GdbError('could not find window %d' % winno)
+            if not isinstance(window, gui.logwindow.LogWindow):
+                raise gdb.GdbError('window %d is not a log window' % winno)
+        elif do_default:
+            window = gui.logwindow.default_log_window
+            if window is None:
+                raise gdb.GdbError('no default log window')
+        else:
+            window = None
+        return (window, arg)
+
+    def invoke(self, arg, from_tty):
+        (window, arg) = self._parse_arg(arg)
+        text = gdb.execute(self.command + ' ' + arg, from_tty, True)
+        window.append(text)
+
+class GuiPrintCommand(GuiPrintBase):
+    def __init__(self):
+        super(GuiPrintCommand, self).__init__('print')
+
+class GuiOutputCommand(GuiPrintBase):
+    def __init__(self):
+        super(GuiOutputCommand, self).__init__('output')
+
+class GuiPrintfCommand(GuiPrintBase):
+    def __init__(self):
+        super(GuiPrintfCommand, self).__init__('printf')
+
+class GuiDprintfCommand(GuiPrintBase):
+    def __init__(self):
+        super(GuiDprintfCommand, self).__init__('dprintf')
+
+    def invoke(self, arg, from_tty):
+        (window, arg) = self._parse_arg(arg, False)
+        orig_arg = arg
+        (ignore, arg) = gdb.decode_line(arg)
+        if arg is None:
+            raise gdb.GdbError("no printf arguments to 'gui dprintf'")
+        arg = arg.strip()
+        if not arg.startswith(','):
+            raise gdb.GdbError("comma expected after linespec")
+        arg = arg[1:]
+        spec = arg[0 : -len(arg)]
+        DPrintfBreakpoint(spec, window, arg)
+
+class InfoWindowsCommand(gdb.Command):
+    def __init__(self):
+        super(InfoWindowsCommand, self).__init__('info windows',
+                                                 gdb.COMMAND_SUPPORT)
+
+    def invoke(self, arg, from_tty):
+        self.dont_repeat()
+        gui.toplevel.state.display()
+
+class DeleteWindowsCommand(gdb.Command):
+    def __init__(self):
+        super(DeleteWindowsCommand, self).__init__('delete window',
+                                                   gdb.COMMAND_SUPPORT)
+
+    def invoke(self, arg, from_tty):
+        self.dont_repeat()
+        winno = int(arg)
+        window = gui.toplevel.state.get(winno)
+        if window is not None:
+            window.destroy()
+
 GuiCommand()
 GuiSourceCommand()
+GuiLogWindowCommand()
+GuiPrintCommand()
+GuiOutputCommand()
+GuiPrintfCommand()
+InfoWindowsCommand()
+DeleteWindowsCommand()

@@ -1,0 +1,8 @@
+A few notes on gdb improvements that would help the GUI:
+
+* The dprintf code here required some hacks.
+  Some kind of I/O redirection capability would be helpful.
+  Also this would require being able to subclass a dprintf breakpoint.
+  Alternatively, a hook on a Breakpoint that is called when a
+  linespec is resolved would work.  Right now you can't make a pending
+  "gui dprintf".
