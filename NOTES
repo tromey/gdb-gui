@@ -11,6 +11,9 @@ A few notes on gdb improvements that would help the GUI:
   changes.  For example:
   * No "new breakpoint" event.  (And this in turn means that more
     breakpoint types must be exposed.)
+    http://sourceware.org/bugzilla/show_bug.cgi?id=15620
   * No "new shared library" event.
+    http://sourceware.org/bugzilla/show_bug.cgi?id=15621
   * No "new thread" event.
+    http://sourceware.org/bugzilla/show_bug.cgi?id=15622
   * No "frame selection" event, e.g. when user types "up".
