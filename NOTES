@@ -6,3 +6,11 @@ A few notes on gdb improvements that would help the GUI:
   Alternatively, a hook on a Breakpoint that is called when a
   linespec is resolved would work.  Right now you can't make a pending
   "gui dprintf".
+
+* Some events are missing.  This means the GUI can't properly react to
+  changes.  For example:
+  * No "new breakpoint" event.  (And this in turn means that more
+    breakpoint types must be exposed.)
+  * No "new shared library" event.
+  * No "new thread" event.
+  * No "frame selection" event, e.g. when user types "up".
