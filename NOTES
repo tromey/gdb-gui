@@ -17,3 +17,8 @@ A few notes on gdb improvements that would help the GUI:
   * No "new thread" event.
     http://sourceware.org/bugzilla/show_bug.cgi?id=15622
   * No "frame selection" event, e.g. when user types "up".
+
+* There is no access to the line table
+  This means we can't have the source window display which lines
+  are executable and which are not
+  http://sourceware.org/bugzilla/show_bug.cgi?id=15629
