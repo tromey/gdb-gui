@@ -22,7 +22,7 @@ import gui.startup
 import os.path
 import gui.toplevel
 
-from gi.repository import Gtk, GtkSource, GObject
+from gi.repository import Gtk, GtkSource, GObject, Gdk
 
 class BufferManager:
     def __init__(self):
@@ -45,6 +45,7 @@ class BufferManager:
         buff.set_text(contents)
         buff.end_not_undoable_action()
         buff.set_modified(False)
+        buff.filename = filename
 
         self.buffers[filename] = buff
         return buff
@@ -167,6 +168,15 @@ class SourceWindow(Toplevel):
 
     def deleted(self, widget, event):
         lru_handler.remove(self)
+
+    def line_mark_activated(self, view, textiter, event):
+        if event.type != Gdk.EventType.BUTTON_PRESS:
+            return
+        if event.button.get_button()[1] != 1:
+            return
+        fun = Invoker("break %s:%d" % (self.view.get_buffer().filename,
+                                       textiter.get_line() + 1))
+        fun()
 
     def _do_scroll(self, buff, srcline):
         buff.place_cursor(buff.get_iter_at_line(srcline))
