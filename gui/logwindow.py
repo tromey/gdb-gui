@@ -19,7 +19,6 @@ import gdb
 import gui.toplevel
 import gui.startup
 from gi.repository import Gtk
-import os.path
 import functools
 
 default_log_window = None
@@ -32,8 +31,7 @@ class LogWindow(gui.toplevel.Toplevel):
         gui.startup.send_to_gtk(self._initialize)
 
     def _initialize(self):
-        builder = Gtk.Builder()
-        builder.add_from_file(os.path.join(gui.self_dir, 'logwindow.xml'))
+        builder = gui.startup.create_builder('logwindow.xml')
         builder.connect_signals(self)
 
         self.window = builder.get_object('logwindow')

@@ -16,13 +16,14 @@
 import gdb
 import threading
 import Queue
+import os
+import os.path
+import gui
 
 import fix_signals
 fix_signals.save()
 
 from gi.repository import Gtk, Gdk, GObject, GtkSource
-
-import os
 
 (read_pipe, write_pipe) = os.pipe()
 
@@ -57,3 +58,9 @@ def start_gtk():
         _t.setDaemon(True)
         _t.start()
         fix_signals.restore()
+
+def create_builder(filename):
+    builder = Gtk.Builder()
+    builder.add_from_file(os.path.join(gui.self_dir, filename))
+    return builder
+

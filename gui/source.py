@@ -19,7 +19,6 @@ import gdb
 from gui.invoker import Invoker
 from gui.toplevel import Toplevel
 import gui.startup
-import os.path
 import gui.toplevel
 
 from gi.repository import Gtk, GtkSource, GObject, Gdk
@@ -155,9 +154,7 @@ class SourceWindow(Toplevel):
         self.do_finish = Invoker("finish")
         self.do_stop = Invoker("interrupt")
 
-        builder = Gtk.Builder()
-        builder.add_from_file(os.path.join(gui.self_dir, 'sourcewindow.xml'))
-
+        builder = gui.startup.create_builder('sourcewindow.xml')
         builder.connect_signals(self)
         self.window = builder.get_object("sourcewindow")
         self.view = builder.get_object("view")
