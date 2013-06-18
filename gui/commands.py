@@ -19,6 +19,7 @@ import gui.source
 import gui.logwindow
 import gui.toplevel
 import gui.dprintf
+import gui.events
 import re
 
 class GuiCommand(gdb.Command):
@@ -153,3 +154,42 @@ GuiOutputCommand()
 GuiPrintfCommand()
 InfoWindowsCommand()
 DeleteWindowsCommand()
+
+_can_override = False
+
+# A temporary test to see if you have a gdb that supports this.
+class TestCommand(gdb.Command):
+    """A temporary test command created for the GUI.
+    This does nothing, the GUI startup code uses it to see if
+    your copy of gdb has some command-overriding support."""
+
+    def __init__(self, set_it):
+        super(TestCommand, self).__init__('maint gui-test', gdb.COMMAND_DATA)
+        self.set_it = set_it
+
+    def invoke(self, arg, from_tty):
+        if self.set_it:
+            global _can_override
+            _can_override = True
+        else:
+            try:
+                super(TestCommand, self).invoke(arg, from_tty)
+            except:
+                pass
+
+TestCommand(True)
+TestCommand(False).invoke('', 0)
+
+if _can_override:
+    class Overrider(gdb.Command):
+        def __init__(self, name, event):
+            super(Overrider, self).__init__(name, gdb.COMMAND_DATA)
+            self.event = event
+
+        def invoke(self, arg, from_tty):
+            super(Overrider, self).invoke(arg, from_tty)
+            self.event.post()
+
+        Overrider('up', gui.events.frame_changed)
+        Overrider('down', gui.events.frame_changed)
+        Overrider('frame', gui.events.frame_changed)

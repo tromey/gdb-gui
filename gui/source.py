@@ -20,6 +20,7 @@ from gui.invoker import Invoker
 from gui.toplevel import Toplevel
 import gui.startup
 import gui.toplevel
+import gui.events
 
 from gi.repository import Gtk, GtkSource, GObject, Gdk
 
@@ -83,7 +84,7 @@ class LRUHandler:
     # These functions must run in the gdb thread.
     #
 
-    def on_event(self, event):
+    def on_event(self, *args):
         (frame, filename, lineno) = get_current_location()
         if filename is not None:
             gui.startup.send_to_gtk(lambda: self.show_source(frame,
@@ -95,9 +96,11 @@ class LRUHandler:
         # ... and thread-changed
         # really just pre-prompt would be good enough
         gdb.events.stop.connect(self.on_event)
+        gui.events.frame_changed.connect(self.on_event)
 
     def _disconnect_events(self):
         gdb.events.stop.disconnect(self.on_event)
+        gui.event.frame_changed.disconnect(self.on_event)
 
     #
     # These functions must run in the Gtk thread.
