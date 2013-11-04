@@ -19,6 +19,7 @@ import gdb
 from gui.invoker import Invoker
 from gui.toplevel import Toplevel
 import gui.startup
+from gui.startup import in_gdb_thread, in_gtk_thread
 import gui.toplevel
 import gui.events
 
@@ -55,6 +56,7 @@ buffer_manager = BufferManager()
 # Return (FILE, LINE) for the selected frame, or, if there is no
 # frame, for "main".  If there is no symbol file, return (None, None)
 # instead.
+@in_gdb_thread
 def get_current_location():
     try:
         frame = gdb.selected_frame()
@@ -80,10 +82,7 @@ class LRUHandler:
     def __init__(self):
         self.windows = []
 
-    #
-    # These functions must run in the gdb thread.
-    #
-
+    @in_gdb_thread
     def on_event(self, *args):
         (frame, filename, lineno) = get_current_location()
         if filename is not None:
@@ -91,6 +90,7 @@ class LRUHandler:
                                                              filename,
                                                              lineno))
 
+    @in_gdb_thread
     def _connect_events(self):
         # FIXME - we need an event for "selected frame changed".
         # ... and thread-changed
@@ -98,14 +98,12 @@ class LRUHandler:
         gdb.events.stop.connect(self.on_event)
         gui.events.frame_changed.connect(self.on_event)
 
+    @in_gdb_thread
     def _disconnect_events(self):
         gdb.events.stop.disconnect(self.on_event)
         gui.event.frame_changed.disconnect(self.on_event)
 
-    #
-    # These functions must run in the Gtk thread.
-    #
-
+    @in_gtk_thread
     def pick_window(self, frame):
         # If a window is showing FRAME, use it.
         # Otherwise, if a window has no frame, use that.
@@ -123,6 +121,7 @@ class LRUHandler:
             return no_frame
         return self.windows[0]
 
+    @in_gtk_thread
     def show_source(self, frame, srcfile, srcline):
         w = self.pick_window(frame)
         # LRU policy.
@@ -131,17 +130,19 @@ class LRUHandler:
         w.frame = frame
         w.show_source(srcfile, srcline)
 
+    @in_gtk_thread
     def remove(self, window):
         self.windows.remove(window)
         if len(self.windows) == 0:
             gui.startup.send_to_gtk(self._disconnect_events)
 
+    @in_gtk_thread
     def add(self, window):
         self.windows.insert(0, window)
         if len(self.windows) == 1:
-            gui.startup.send_to_gtk(self._connect_events)
+            gdb.post_event(self._connect_events)
         # Show something.
-        gui.startup.send_to_gtk(lambda: self.on_event(None))
+        gdb.post_event(lambda: self.on_event(None))
 
 lru_handler = LRUHandler()
 

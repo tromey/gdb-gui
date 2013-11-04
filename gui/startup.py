@@ -47,13 +47,16 @@ class _GtkThread(threading.Thread):
         GObject.type_register(GtkSource.View)
         Gtk.main()
 
+_gdb_thread = None
 _t = None
 
 def start_gtk():
     global _t
+    global _gdb_thread
     if _t is None:
         GObject.threads_init()
         Gdk.threads_init()
+        _gdb_thread = threading.current_thread()
         _t = _GtkThread()
         _t.setDaemon(True)
         _t.start()
@@ -64,3 +67,16 @@ def create_builder(filename):
     builder.add_from_file(os.path.join(gui.self_dir, filename))
     return builder
 
+def in_gdb_thread(func):
+    def ensure_gdb_thread(*args, **kwargs):
+        if threading.current_thread() is not _gdb_thread:
+            raise RuntimeError("must run '%s' in gdb thread" % repr(func))
+        return func(*args, **kwargs)
+    return ensure_gdb_thread
+
+def in_gtk_thread(func):
+    def ensure_gtk_thread(*args, **kwargs):
+        if threading.current_thread() is not _t:
+            raise RuntimeError("must run '%s' in Gtk thread" % repr(func))
+        return func(*args, **kwargs)
+    return ensure_gtk_thread

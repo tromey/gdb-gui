@@ -1,4 +1,4 @@
-# Copyright (C) 2012 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2012, 2013 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import gui.toplevel
 import gui.dprintf
 import gui.events
 import re
+from gui.startup import in_gtk_thread
 
 class GuiCommand(gdb.Command):
     def __init__(self):
