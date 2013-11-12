@@ -16,14 +16,16 @@
 # Source view.
 
 import gdb
+import gui
 from gui.invoker import Invoker
 from gui.toplevel import Toplevel
 import gui.startup
 from gui.startup import in_gdb_thread, in_gtk_thread
 import gui.toplevel
 import gui.events
+import os.path
 
-from gi.repository import Gtk, GtkSource, GObject, Gdk
+from gi.repository import Gtk, GtkSource, GObject, Gdk, GdkPixbuf
 
 class BufferManager:
     def __init__(self):
@@ -33,7 +35,24 @@ class BufferManager:
         # FIXME: we should be smart about buffer caching.
         pass
 
-    def get_buffer(self, filename):
+    @in_gtk_thread
+    def _set_marks(self, buffer, line_set):
+        iter = buffer.get_iter_at_line(0)
+        while True:
+            if iter.get_line() + 1 in line_set:
+                mark = buffer.create_source_mark(None, 'executable', iter)
+            if not iter.forward_line():
+                break
+
+    @in_gdb_thread
+    def _get_lines_update(self, buffer, frame):
+        symtab = frame.find_sal().symtab
+        if hasattr(symtab, 'linetable'):
+            line_set = set(symtab.linetable().source_lines())
+            gui.startup.send_to_gtk(lambda: self._set_marks(buffer, line_set))
+
+    @in_gtk_thread
+    def get_buffer(self, frame, filename):
         if filename in self.buffers:
             return self.buffers[filename]
 
@@ -47,6 +66,9 @@ class BufferManager:
         buff.end_not_undoable_action()
         buff.set_modified(False)
         buff.filename = filename
+
+        if frame is not None:
+            gdb.post_event(lambda: self._get_lines_update(buff, frame))
 
         self.buffers[filename] = buff
         return buff
@@ -128,7 +150,7 @@ class LRUHandler:
         self.windows.remove(w)
         self.windows.append(w)
         w.frame = frame
-        w.show_source(srcfile, srcline)
+        w.show_source(frame, srcfile, srcline)
 
     @in_gtk_thread
     def remove(self, window):
@@ -147,6 +169,10 @@ class LRUHandler:
 lru_handler = LRUHandler()
 
 class SourceWindow(Toplevel):
+    def _get_pixmap(self, filename):
+        path = os.path.join(gui.self_dir, filename)
+        return GdkPixbuf.Pixbuf.new_from_file(path)
+
     def __init__(self):
         super(SourceWindow, self).__init__()
 
@@ -162,6 +188,15 @@ class SourceWindow(Toplevel):
         builder.connect_signals(self)
         self.window = builder.get_object("sourcewindow")
         self.view = builder.get_object("view")
+
+        attrs = GtkSource.MarkAttributes()
+        # FIXME: really we want a little green dot...
+        attrs.set_pixbuf(self._get_pixmap('icons/countpoint-marker.png'))
+        self.view.set_mark_attributes('executable', attrs, 0)
+
+        attrs = GtkSource.MarkAttributes()
+        attrs.set_pixbuf(self._get_pixmap('icons/breakpoint-marker.png'))
+        self.view.set_mark_attributes('executable', attrs, 1)
 
         lru_handler.add(self)
 
@@ -184,8 +219,8 @@ class SourceWindow(Toplevel):
         self.view.scroll_mark_onscreen(buff.get_insert())
         return False
 
-    def show_source(self, srcfile, srcline):
-        buff = buffer_manager.get_buffer(srcfile)
+    def show_source(self, frame, srcfile, srcline):
+        buff = buffer_manager.get_buffer(frame, srcfile)
         if buff is not None:
             old_buffer = self.view.get_buffer()
             self.view.set_buffer(buff)
