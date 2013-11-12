@@ -191,6 +191,6 @@ if _can_override:
             super(Overrider, self).invoke(arg, from_tty)
             self.event.post()
 
-        Overrider('up', gui.events.frame_changed)
-        Overrider('down', gui.events.frame_changed)
-        Overrider('frame', gui.events.frame_changed)
+    Overrider('up', gui.events.frame_changed)
+    Overrider('down', gui.events.frame_changed)
+    Overrider('frame', gui.events.frame_changed)
