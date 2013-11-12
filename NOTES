@@ -22,3 +22,19 @@ A few notes on gdb improvements that would help the GUI:
   This means we can't have the source window display which lines
   are executable and which are not
   http://sourceware.org/bugzilla/show_bug.cgi?id=15629
+
+================================================================
+
+Windows
+
+assembly view (?)
+breakpoint
+signal handling?
+data display
+  special registers display?
+  auto-updater?
+stack
+inferiors/threads
+  could expand into stack?
+list of files in the program
+redirect gdb stdlog to a window
