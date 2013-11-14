@@ -196,7 +196,7 @@ class SourceWindow(Toplevel):
 
         attrs = GtkSource.MarkAttributes()
         attrs.set_pixbuf(self._get_pixmap('icons/breakpoint-marker.png'))
-        self.view.set_mark_attributes('executable', attrs, 1)
+        self.view.set_mark_attributes('breakpoint', attrs, 1)
 
         lru_handler.add(self)
 
