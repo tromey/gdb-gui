@@ -156,7 +156,7 @@ class LRUHandler:
     def remove(self, window):
         self.windows.remove(window)
         if len(self.windows) == 0:
-            gui.startup.send_to_gtk(self._disconnect_events)
+            gdb.post_event(self._disconnect_events)
 
     @in_gtk_thread
     def add(self, window):
