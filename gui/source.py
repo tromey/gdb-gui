@@ -45,14 +45,13 @@ class BufferManager:
                 break
 
     @in_gdb_thread
-    def _get_lines_update(self, buffer, frame):
-        symtab = frame.find_sal().symtab
+    def _get_lines_update(self, buffer, symtab):
         if hasattr(symtab, 'linetable'):
             line_set = set(symtab.linetable().source_lines())
             gui.startup.send_to_gtk(lambda: self._set_marks(buffer, line_set))
 
     @in_gtk_thread
-    def get_buffer(self, frame, filename):
+    def get_buffer(self, symtab, filename):
         if filename in self.buffers:
             return self.buffers[filename]
 
@@ -67,23 +66,23 @@ class BufferManager:
         buff.set_modified(False)
         buff.filename = filename
 
-        if frame is not None:
-            gdb.post_event(lambda: self._get_lines_update(buff, frame))
+        if symtab is not None:
+            gdb.post_event(lambda: self._get_lines_update(buff, symtab))
 
         self.buffers[filename] = buff
         return buff
 
 buffer_manager = BufferManager()
 
-# Return (FILE, LINE) for the selected frame, or, if there is no
-# frame, for "main".  If there is no symbol file, return (None, None)
-# instead.
+# Return (FRAME, SYMTAB, FILE, LINE) for the selected frame, or, if
+# there is no frame, for "main".
 @in_gdb_thread
 def get_current_location():
     try:
         frame = gdb.selected_frame()
         sal = frame.find_sal()
-        filename = sal.symtab.fullname()
+        symtab = sal.symtab
+        filename = symtab.fullname()
         lineno = sal.line
     except gdb.error:
         # FIXME: should use the static location as set by list etc.
@@ -92,13 +91,14 @@ def get_current_location():
             frame = None
             sym = gdb.lookup_global_symbol('main')
             lineno = sym.line
-            filename = sym.symtab.fullname()
+            symtab = sym.symtab
+            filename = symtab.fullname()
         except gdb.error:
             # Perhaps no symbol file.
-            return (None, None, None)
+            return (None, None, None, None)
         except AttributeError:
-            return (None, None, None)
-    return (frame, filename, lineno)
+            return (None, None, None, None)
+    return (frame, symtab, filename, lineno)
 
 class LRUHandler:
     def __init__(self):
@@ -106,9 +106,10 @@ class LRUHandler:
 
     @in_gdb_thread
     def on_event(self, *args):
-        (frame, filename, lineno) = get_current_location()
+        (frame, symtab, filename, lineno) = get_current_location()
         if filename is not None:
             gui.startup.send_to_gtk(lambda: self.show_source(frame,
+                                                             symtab,
                                                              filename,
                                                              lineno))
 
@@ -144,13 +145,13 @@ class LRUHandler:
         return self.windows[0]
 
     @in_gtk_thread
-    def show_source(self, frame, srcfile, srcline):
+    def show_source(self, frame, symtab, srcfile, srcline):
         w = self.pick_window(frame)
         # LRU policy.
         self.windows.remove(w)
         self.windows.append(w)
         w.frame = frame
-        w.show_source(frame, srcfile, srcline)
+        w.show_source(symtab, srcfile, srcline)
 
     @in_gtk_thread
     def remove(self, window):
@@ -219,8 +220,8 @@ class SourceWindow(Toplevel):
         self.view.scroll_mark_onscreen(buff.get_insert())
         return False
 
-    def show_source(self, frame, srcfile, srcline):
-        buff = buffer_manager.get_buffer(frame, srcfile)
+    def show_source(self, symtab, srcfile, srcline):
+        buff = buffer_manager.get_buffer(symtab, srcfile)
         if buff is not None:
             old_buffer = self.view.get_buffer()
             self.view.set_buffer(buff)
