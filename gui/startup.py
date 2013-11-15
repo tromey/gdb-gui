@@ -47,7 +47,7 @@ class _GtkThread(threading.Thread):
         GObject.type_register(GtkSource.View)
         Gtk.main()
 
-_gdb_thread = None
+_gdb_thread = threading.current_thread()
 _t = None
 
 def start_gtk():
@@ -56,7 +56,6 @@ def start_gtk():
     if _t is None:
         GObject.threads_init()
         Gdk.threads_init()
-        _gdb_thread = threading.current_thread()
         _t = _GtkThread()
         _t.setDaemon(True)
         _t.start()
