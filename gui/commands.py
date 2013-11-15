@@ -20,6 +20,7 @@ import gui.logwindow
 import gui.toplevel
 import gui.dprintf
 import gui.events
+import gui.display
 import re
 from gui.startup import in_gtk_thread
 
@@ -126,6 +127,24 @@ class GuiDprintfCommand(GuiPrintBase):
         spec = arg[0 : -len(arg)]
         DPrintfBreakpoint(spec, window, arg)
 
+class GuiDisplayCommand(gdb.Command):
+    """FIXME"""
+
+    def __init__(self):
+        super(GuiDisplayCommand, self).__init__('gui display',
+                                                gdb.COMMAND_SUPPORT)
+
+    def invoke(self, arg, from_tty):
+        self.dont_repeat()
+        # FIXME: perhaps Toplevel should be calling startup_gtk
+        gui.startup.start_gtk()
+        gui.display.DisplayWindow(arg)
+
+    def complete(self, text, word):
+        # FIXME, see
+        # https://sourceware.org/bugzilla/show_bug.cgi?id=13077
+        return None
+
 class InfoWindowsCommand(gdb.Command):
     def __init__(self):
         super(InfoWindowsCommand, self).__init__('info windows',
@@ -153,6 +172,7 @@ GuiLogWindowCommand()
 GuiPrintCommand()
 GuiOutputCommand()
 GuiPrintfCommand()
+GuiDisplayCommand()
 InfoWindowsCommand()
 DeleteWindowsCommand()
 
