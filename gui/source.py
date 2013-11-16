@@ -176,7 +176,10 @@ class SourceWindow(Toplevel):
 
     def __init__(self):
         super(SourceWindow, self).__init__()
+        gui.startup.send_to_gtk(self._initialize)
 
+    @in_gtk_thread
+    def _initialize(self):
         self.frame = None
 
         self.do_step = Invoker("step")

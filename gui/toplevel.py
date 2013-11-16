@@ -21,6 +21,7 @@ import threading
 
 class _ToplevelState(object):
     def __init__(self):
+        gui.startup.start_gtk()
         # This lock must be held when using the other globals here.
         self.toplevel_lock = threading.Lock()
         self.next_toplevel = 1

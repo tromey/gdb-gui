@@ -41,8 +41,7 @@ class GuiSourceCommand(gdb.Command):
 
     def invoke(self, arg, from_tty):
         self.dont_repeat()
-        gui.startup.start_gtk()
-        gui.startup.send_to_gtk(gui.source.SourceWindow)
+        gui.source.SourceWindow()
 
 class GuiLogWindowCommand(gdb.Command):
     """Create a new log window.
@@ -63,7 +62,6 @@ class GuiLogWindowCommand(gdb.Command):
 
     def invoke(self, arg, from_tty):
         self.dont_repeat()
-        gui.startup.start_gtk()
         window = gui.logwindow.LogWindow()
         print "Created log window %d; now the default" % window.number
 
@@ -136,8 +134,6 @@ class GuiDisplayCommand(gdb.Command):
 
     def invoke(self, arg, from_tty):
         self.dont_repeat()
-        # FIXME: perhaps Toplevel should be calling startup_gtk
-        gui.startup.start_gtk()
         gui.display.DisplayWindow(arg)
 
     def complete(self, text, word):
