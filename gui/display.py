@@ -16,7 +16,7 @@
 # Log window.
 
 import gdb
-import gui.toplevel
+import gui.updatewindow
 import gui.startup
 from gi.repository import Gtk
 import functools
@@ -26,30 +26,13 @@ import gui.events
 # FIXME: TO DO:
 # * highlight the changes
 
-class DisplayWindow(gui.toplevel.Toplevel):
+class DisplayWindow(gui.updatewindow.UpdateWindow):
     def __init__(self, command):
-        super(DisplayWindow, self).__init__()
         self.command = command
-        gui.startup.send_to_gtk(self._initialize)
-        self._connect_events()
-        # Display the data now.
-        self._on_event()
+        super(DisplayWindow, self).__init__()
 
     @in_gdb_thread
-    def _connect_events(self):
-        # FIXME - we need an event for "selected frame changed".
-        # ... and thread-changed
-        # really just pre-prompt would be good enough
-        gdb.events.stop.connect(self._on_event)
-        gui.events.frame_changed.connect(self._on_event)
-
-    @in_gdb_thread
-    def _disconnect_events(self):
-        gdb.events.stop.disconnect(self.on_event)
-        gui.event.frame_changed.disconnect(self.on_event)
-
-    @in_gdb_thread
-    def _on_event(self, *args):
+    def on_event(self):
         try:
             text = gdb.execute(self.command, to_string = True)
         except gdb.error as what:
@@ -57,7 +40,7 @@ class DisplayWindow(gui.toplevel.Toplevel):
         gui.startup.send_to_gtk(lambda: self._update(text))
 
     @in_gtk_thread
-    def _initialize(self):
+    def gtk_initialize(self):
         builder = gui.startup.create_builder('logwindow.xml')
         builder.connect_signals(self)
 
@@ -67,12 +50,6 @@ class DisplayWindow(gui.toplevel.Toplevel):
 
         self.window.set_title('GDB "%s" @%d' % (self.command, self.number))
         self.window.show()
-
-    @in_gtk_thread
-    def remove(self, window):
-        self.windows.remove(window)
-        if len(self.windows) == 0:
-            gdb.post_event(self._disconnect_events)
 
     def _update(self, text):
         self.buffer.delete(self.buffer.get_start_iter(),
