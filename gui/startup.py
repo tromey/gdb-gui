@@ -52,7 +52,6 @@ _t = None
 
 def start_gtk():
     global _t
-    global _gdb_thread
     if _t is None:
         GObject.threads_init()
         Gdk.threads_init()
