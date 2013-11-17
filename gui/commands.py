@@ -126,7 +126,12 @@ class GuiDprintfCommand(GuiPrintBase):
         DPrintfBreakpoint(spec, window, arg)
 
 class GuiDisplayCommand(gdb.Command):
-    """FIXME"""
+    """Create a new display window.
+    Usage: gui display [-diff] COMMAND
+    A display window runs a gdb command after operations that change
+    the current frame or that cause the inferior to stop.
+    If "-diff" is given, then every time the display is updated,
+    changed lines are highlighted."""
 
     def __init__(self):
         super(GuiDisplayCommand, self).__init__('gui display',
@@ -134,7 +139,11 @@ class GuiDisplayCommand(gdb.Command):
 
     def invoke(self, arg, from_tty):
         self.dont_repeat()
-        gui.display.DisplayWindow(arg)
+        diff = False
+        if arg.startswith('-diff '):
+            diff = True
+            arg = arg[6:]
+        gui.display.DisplayWindow(arg, diff)
 
     def complete(self, text, word):
         # FIXME, see
