@@ -27,7 +27,6 @@ breakpoint
 signal handling?
 data display
   special registers display?
-  auto-updater?
 stack
 inferiors/threads
   could expand into stack?
