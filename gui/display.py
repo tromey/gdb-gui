@@ -18,7 +18,7 @@
 import gdb
 import gui.updatewindow
 import gui.startup
-from gi.repository import Gtk
+from gi.repository import Gtk, Pango
 import functools
 from gui.startup import in_gdb_thread, in_gtk_thread
 import gui.events
@@ -46,6 +46,7 @@ class DisplayWindow(gui.updatewindow.UpdateWindow):
 
         self.window = builder.get_object('logwindow')
         self.view = builder.get_object('textview')
+        self.view.modify_font(Pango.FontDescription('Fixed'))
         self.buffer = builder.get_object('buffer')
 
         self.window.set_title('GDB "%s" @%d' % (self.command, self.number))
