@@ -22,13 +22,16 @@ from gi.repository import Gtk, Pango
 import functools
 from gui.startup import in_gdb_thread, in_gtk_thread
 import gui.events
+from difflib import SequenceMatcher
 
 # FIXME: TO DO:
 # * highlight the changes
 
 class DisplayWindow(gui.updatewindow.UpdateWindow):
-    def __init__(self, command):
+    def __init__(self, command, diff = False):
         self.command = command
+        self.diff = diff
+        self.last_text = None
         super(DisplayWindow, self).__init__()
 
     @in_gdb_thread
@@ -47,7 +50,11 @@ class DisplayWindow(gui.updatewindow.UpdateWindow):
         self.window = builder.get_object('logwindow')
         self.view = builder.get_object('textview')
         self.view.modify_font(Pango.FontDescription('Fixed'))
+
         self.buffer = builder.get_object('buffer')
+
+        if self.diff:
+            self.tag = self.buffer.create_tag('new', foreground = 'red')
 
         self.window.set_title('GDB "%s" @%d' % (self.command, self.number))
         self.window.show()
@@ -55,4 +62,22 @@ class DisplayWindow(gui.updatewindow.UpdateWindow):
     def _update(self, text):
         self.buffer.delete(self.buffer.get_start_iter(),
                            self.buffer.get_end_iter())
+        if self.diff:
+            if self.last_text is None:
+                self.last_text = text.splitlines(1)
+                # Fall through.
+            else:
+                split = text.splitlines(1)
+                d = difflib.Differ()
+                for line in d.compare(self.last_text, split):
+                    if line[0] == ' ':
+                        self.buffer.insert(self.buffer.get_end_iter(),
+                                           line[2:])
+                    else if line[0] == '+':
+                        self.buffer.insert_with_tags(self.buffer.get_end_iter(),
+                                                     line[2:],
+                                                     self.tag)
+                    self.buffer.insert(self.buffer.get_end_iter(), '\n')
+                self.last_text = split
+                return
         self.buffer.insert_at_cursor(text)
