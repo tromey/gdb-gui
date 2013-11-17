@@ -62,11 +62,7 @@ class UpdateWindow(Toplevel):
 
     @in_gdb_thread
     def _on_event(self, *args):
-        try:
-            text = gdb.execute(self.command, to_string = True)
-        except gdb.error as what:
-            text = str(what)
-        gui.startup.send_to_gtk(lambda: self._update(text))
+        self.on_event()
 
     @in_gtk_thread
     def deleted(self):
