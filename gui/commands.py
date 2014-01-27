@@ -1,4 +1,4 @@
-# Copyright (C) 2012, 2013 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2012, 2013, 2014 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import gui.toplevel
 import gui.dprintf
 import gui.events
 import gui.display
+import gui.viz
 import re
 from gui.startup import in_gtk_thread
 
@@ -42,6 +43,15 @@ class GuiSourceCommand(gdb.Command):
     def invoke(self, arg, from_tty):
         self.dont_repeat()
         gui.source.SourceWindow()
+
+class GuiVizCommand(gdb.Command):
+    def __init__(self):
+        super(GuiVizCommand, self).__init__('gui viz',
+                                            gdb.COMMAND_SUPPORT)
+
+    def invoke(self, arg, from_tty):
+        self.dont_repeat()
+        gui.viz.Visualizer()
 
 class GuiLogWindowCommand(gdb.Command):
     """Create a new log window.
@@ -178,6 +188,7 @@ GuiPrintCommand()
 GuiOutputCommand()
 GuiPrintfCommand()
 GuiDisplayCommand()
+GuiVizCommand()
 InfoWindowsCommand()
 DeleteWindowsCommand()
 
