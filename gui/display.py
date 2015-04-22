@@ -1,4 +1,4 @@
-# Copyright (C) 2013 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2013, 2015 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ class DisplayWindow(gui.updatewindow.UpdateWindow):
                     if line[0] == ' ':
                         self.buffer.insert(self.buffer.get_end_iter(),
                                            line[2:])
-                    else if line[0] == '+':
+                    elif line[0] == '+':
                         self.buffer.insert_with_tags(self.buffer.get_end_iter(),
                                                      line[2:],
                                                      self.tag)
