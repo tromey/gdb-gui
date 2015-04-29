@@ -1,4 +1,4 @@
-# Copyright (C) 2013, 2015 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2015 Tom Tromey <tom@trolley.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,11 +13,22 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os.path
+import gdb
+import gui.events
 
-self_dir = os.path.abspath(os.path.dirname(__file__))
+_last_selected_frame = None
 
-# Import anything that defines a command or parameter.
-import gui.commands
-import gui.toplevel
-import gui.framecache
+def check_frame():
+    global _last_selected_frame
+    sel = None
+    try:
+        sel = gdb.selected_frame()
+    except:
+        pass
+    if _last_selected_frame is not sel:
+        _last_selected_frame = sel
+        gui.events.frame_changed.post()
+
+# See my gdb branch on github.
+if hasattr(gdb.events, 'before_prompt'):
+    gdb.events.before_prompt.connect(check_frame)

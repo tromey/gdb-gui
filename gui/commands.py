@@ -1,4 +1,4 @@
-# Copyright (C) 2012, 2013 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2012, 2013, 2015 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -206,7 +206,10 @@ class TestCommand(gdb.Command):
 TestCommand(True)
 TestCommand(False).invoke('', 0)
 
-if _can_override:
+# See framecache.py - we prefer the before_prompt event if it exists;
+# but otherwise try the overriding approach.  Both of these rely on a
+# hacked gdb :-(
+if _can_override and not hasattr(gdb.events, 'before_prompt'):
     class Overrider(gdb.Command):
         def __init__(self, name, event):
             super(Overrider, self).__init__(name, gdb.COMMAND_DATA)
