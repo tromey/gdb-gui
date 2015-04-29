@@ -1,4 +1,4 @@
-# Copyright (C) 2012, 2013 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2012, 2013, 2015 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ import gui.toplevel
 import gui.events
 import os.path
 
-from gi.repository import Gtk, GtkSource, GObject, Gdk, GdkPixbuf
+from gi.repository import Gtk, GtkSource, GObject, Gdk, GdkPixbuf, Pango
 
 class BufferManager:
     def __init__(self):
@@ -192,6 +192,10 @@ class SourceWindow(Toplevel):
         builder.connect_signals(self)
         self.window = builder.get_object("sourcewindow")
         self.view = builder.get_object("view")
+
+        font_desc = Pango.FontDescription('monospace')
+        if font_desc:
+            self.view.modify_font(font_desc)
 
         attrs = GtkSource.MarkAttributes()
         # FIXME: really we want a little green dot...
