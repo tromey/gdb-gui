@@ -30,6 +30,7 @@ from gi.repository import Gtk, GtkSource, GObject, Gdk, GdkPixbuf, Pango
 class BufferManager:
     def __init__(self):
         self.buffers = {}
+        self.lang_manager = None
 
     def release_buffer(self, buff):
         # FIXME: we should be smart about buffer caching.
@@ -55,7 +56,11 @@ class BufferManager:
         if filename in self.buffers:
             return self.buffers[filename]
 
+        if not self.lang_manager:
+            self.lang_manager = GtkSource.LanguageManager.get_default()
+
         buff = GtkSource.Buffer()
+        buff.set_language(self.lang_manager.guess_language(filename))
         buff.begin_not_undoable_action()
         try:
             contents = open(filename).read()
