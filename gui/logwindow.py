@@ -1,4 +1,4 @@
-# Copyright (C) 2013 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2013, 2015 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ class LogWindow(gui.toplevel.Toplevel):
 
         self.window = builder.get_object('logwindow')
         self.view = builder.get_object('textview')
-        self.view.modify_font(Pango.FontDescription('Fixed'))
+        self.view.modify_font(Pango.FontDescription('monospace'))
         self.buffer = builder.get_object('buffer')
 
         self.window.set_title('GDB Log @%d' % self.number)
