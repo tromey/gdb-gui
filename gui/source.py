@@ -208,6 +208,7 @@ class SourceWindow(Toplevel):
 
         lru_handler.add(self)
 
+        self.window.set_title('GDB Source @%d' % self.number)
         self.window.show()
 
     def deleted(self, widget, event):
@@ -232,6 +233,9 @@ class SourceWindow(Toplevel):
         if buff is not None:
             old_buffer = self.view.get_buffer()
             self.view.set_buffer(buff)
+            # Might be good to let the user pick the format...
+            self.window.set_title('%s - GDB Source @%d'
+                                  % (os.path.basename(srcfile), self.number))
             buffer_manager.release_buffer(old_buffer)
             GObject.idle_add(self._do_scroll, buff, srcline - 1)
             # self.view.scroll_to_iter(buff.get_iter_at_line(srcline), 0.0)

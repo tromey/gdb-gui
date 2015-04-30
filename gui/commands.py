@@ -188,7 +188,9 @@ part of the TUI."""
 class DeleteWindowsCommand(gdb.Command):
     """Delete a GUI window.
 Usage: delete window N
-Delete GUI window number N.  The numbers can be found with "info windows"."""
+Delete GUI window number N.
+A window's number appears in its title bar, and can also be
+found using "info windows"."""
 
     def __init__(self):
         super(DeleteWindowsCommand, self).__init__('delete window',
