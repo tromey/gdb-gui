@@ -31,9 +31,9 @@ class GuiCommand(gdb.Command):
 
 class GuiSourceCommand(gdb.Command):
     """Create a new source window.
-    Usage: gui source
-    This creates a new source window in the GUI.  Any number of source
-    windows can be created."""
+Usage: gui source
+This creates a new source window in the GUI.  Any number of source
+windows can be created."""
 
     def __init__(self):
         super(GuiSourceCommand, self).__init__('gui source',
@@ -45,16 +45,15 @@ class GuiSourceCommand(gdb.Command):
 
 class GuiLogWindowCommand(gdb.Command):
     """Create a new log window.
-    Usage: gui log
-    This creates a new "log" window in the GUI.  A log window is used
-    to display output from "gui print", "gui printf", "gui output",
-    and "gui dprintf".
+Usage: gui log
+This creates a new "log" window in the GUI.  A log window is used
+to display output from "gui print", "gui printf", "gui output",
+and "gui dprintf".
 
-    Multiple log windows can be created and output can be directed to
-    a given instance using the "@" syntax, like:
+Multiple log windows can be created and output can be directed to
+a given instance using the "@" syntax, like:
 
-        gui printf @5 "hello\n"
-    """
+gui print @5 variable"""
 
     def __init__(self):
         super(GuiLogWindowCommand, self).__init__('gui log',
@@ -97,18 +96,38 @@ class GuiPrintBase(gdb.Command):
         window.append(text)
 
 class GuiPrintCommand(GuiPrintBase):
+    """Print to a gui log window.
+Usage: gui print [@N] ARGS
+This is a wrapper for the "print" command that redirects its output
+to a "gui log" window.  If "@N" is given, then output goes to that
+window; otherwise, output goes to the most recently created log window."""
     def __init__(self):
         super(GuiPrintCommand, self).__init__('print')
 
 class GuiOutputCommand(GuiPrintBase):
+    """Output to a gui log window.
+Usage: gui output [@N] ARGS
+This is a wrapper for the "output" command that redirects its output
+to a "gui log" window.  If "@N" is given, then output goes to that
+window; otherwise, output goes to the most recently created log window."""
     def __init__(self):
         super(GuiOutputCommand, self).__init__('output')
 
 class GuiPrintfCommand(GuiPrintBase):
+    """printf to a gui log window.
+Usage: gui printf [@N] ARGS
+This is a wrapper for the "printf" command that redirects its output
+to a "gui log" window.  If "@N" is given, then output goes to that
+window; otherwise, output goes to the most recently created log window."""
     def __init__(self):
         super(GuiPrintfCommand, self).__init__('printf')
 
 class GuiDprintfCommand(GuiPrintBase):
+    """dprintf to a gui log window.
+Usage: gui dprintf [@N] ARGS
+This is a wrapper for the "dprintf" command that redirects its output
+to a "gui log" window.  If "@N" is given, then output goes to that
+window; otherwise, output goes to the most recently created log window."""
     def __init__(self):
         super(GuiDprintfCommand, self).__init__('dprintf')
 
@@ -127,11 +146,12 @@ class GuiDprintfCommand(GuiPrintBase):
 
 class GuiDisplayCommand(gdb.Command):
     """Create a new display window.
-    Usage: gui display [-diff] COMMAND
-    A display window runs a gdb command after operations that change
-    the current frame or that cause the inferior to stop.
-    If "-diff" is given, then every time the display is updated,
-    changed lines are highlighted."""
+Usage: gui display [-diff] COMMAND
+
+A display window runs a gdb command after operations that change the
+current frame or that cause the inferior to stop.  If "-diff" is
+given, then every time the display is updated, changed lines are
+highlighted."""
 
     def __init__(self):
         super(GuiDisplayCommand, self).__init__('gui display',
@@ -151,6 +171,12 @@ class GuiDisplayCommand(gdb.Command):
         return None
 
 class InfoWindowsCommand(gdb.Command):
+    """List all the GUI windows.
+Usage: info windows
+This lists all the GUI windows.
+Note that this should not be confused with "info win", which is
+part of the TUI."""
+
     def __init__(self):
         super(InfoWindowsCommand, self).__init__('info windows',
                                                  gdb.COMMAND_SUPPORT)
@@ -160,6 +186,10 @@ class InfoWindowsCommand(gdb.Command):
         gui.toplevel.state.display()
 
 class DeleteWindowsCommand(gdb.Command):
+    """Delete a GUI window.
+Usage: delete window N
+Delete GUI window number N.  The numbers can be found with "info windows"."""
+
     def __init__(self):
         super(DeleteWindowsCommand, self).__init__('delete window',
                                                    gdb.COMMAND_SUPPORT)
