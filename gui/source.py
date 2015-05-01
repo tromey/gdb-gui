@@ -17,6 +17,7 @@
 
 import gdb
 import gui
+import gui.updatewindow
 from gui.invoker import Invoker
 from gui.toplevel import Toplevel
 import gui.startup
@@ -24,6 +25,7 @@ from gui.startup import in_gdb_thread, in_gtk_thread
 import gui.toplevel
 import gui.events
 import os.path
+import gui.gdbutil
 
 from gi.repository import Gtk, GtkSource, GObject, Gdk, GdkPixbuf, Pango
 
@@ -174,17 +176,19 @@ class LRUHandler:
 
 lru_handler = LRUHandler()
 
-class SourceWindow(Toplevel):
+BUTTON_NAMES = ["step", "next", "continue", "finish", "stop"]
+
+class SourceWindow(gui.updatewindow.UpdateWindow):
     def _get_pixmap(self, filename):
         path = os.path.join(gui.self_dir, filename)
         return GdkPixbuf.Pixbuf.new_from_file(path)
 
     def __init__(self):
         super(SourceWindow, self).__init__()
-        gui.startup.send_to_gtk(self._initialize)
+        gdb.events.cont.connect(self._on_cont_event)
 
     @in_gtk_thread
-    def _initialize(self):
+    def gtk_initialize(self):
         self.frame = None
 
         self.do_step = Invoker("step")
@@ -197,6 +201,11 @@ class SourceWindow(Toplevel):
         builder.connect_signals(self)
         self.window = builder.get_object("sourcewindow")
         self.view = builder.get_object("view")
+
+        # Maybe there is a cleaner way?
+        self.buttons = {}
+        for name in BUTTON_NAMES:
+            self.buttons[name] = builder.get_object(name)
 
         font_desc = Pango.FontDescription('monospace')
         if font_desc:
@@ -216,8 +225,31 @@ class SourceWindow(Toplevel):
         self.window.set_title('GDB Source @%d' % self.number)
         self.window.show()
 
-    def deleted(self, widget, event):
+    @in_gtk_thread
+    def _update_buttons(self, running):
+        for button in BUTTON_NAMES:
+            if button is "stop":
+                self.buttons[button].set_sensitive(running)
+            else:
+                self.buttons[button].set_sensitive(not running)
+
+    @in_gdb_thread
+    def on_event(self):
+        running = gui.gdbutil.is_running()
+        gui.startup.send_to_gtk(lambda: self._update_buttons(running))
+
+    @in_gdb_thread
+    def _on_cont_event(self, event):
+        self.on_event()
+
+    @in_gdb_thread
+    def _disconnect_cont_event(self):
+        gdb.events.cont.disconnect(self._on_cont_event)
+
+    def deleted(self, *args):
         lru_handler.remove(self)
+        gdb.post_event(self._disconnect_cont_event)
+        super(SourceWindow, self).deleted()
 
     def line_mark_activated(self, view, textiter, event):
         if event.type != Gdk.EventType.BUTTON_PRESS:

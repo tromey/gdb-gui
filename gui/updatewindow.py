@@ -1,4 +1,4 @@
-# Copyright (C) 2013 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2013, 2015 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -65,6 +65,6 @@ class UpdateWindow(Toplevel):
         self.on_event()
 
     @in_gtk_thread
-    def deleted(self):
+    def deleted(self, *args):
         gdb.post_event(self._disconnect_events)
         self.destroy()

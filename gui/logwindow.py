@@ -42,7 +42,7 @@ class LogWindow(gui.toplevel.Toplevel):
         self.window.set_title('GDB Log @%d' % self.number)
         self.window.show()
 
-    def deleted(self, widget, event):
+    def deleted(self, *args):
         if default_log_window == self:
             default_log_window = None
 
