@@ -1,4 +1,4 @@
-# Copyright (C) 2012, 2013 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2012, 2013, 2015 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ import gui
 import fix_signals
 fix_signals.save()
 
-from gi.repository import Gtk, Gdk, GObject, GtkSource
+from gi.repository import Gtk, Gdk, GObject, GtkSource, GLib
 
 (read_pipe, write_pipe) = os.pipe()
 
@@ -53,6 +53,10 @@ _t = None
 def start_gtk():
     global _t
     if _t is None:
+        GLib.set_application_name('GDB')
+        GLib.set_prgname('GDB')
+        Gdk.set_program_class('GDB')
+        Gtk.Window.set_default_icon_name('GDB')
         GObject.threads_init()
         Gdk.threads_init()
         _t = _GtkThread()
