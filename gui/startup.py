@@ -23,7 +23,7 @@ import gui
 import fix_signals
 fix_signals.save()
 
-from gi.repository import Gtk, Gdk, GObject, GtkSource, GLib
+from gi.repository import Gtk, Gdk, GObject, GtkSource, GLib, GdkPixbuf
 
 (read_pipe, write_pipe) = os.pipe()
 
@@ -57,6 +57,8 @@ def start_gtk():
         GLib.set_prgname('GDB')
         Gdk.set_program_class('GDB')
         Gtk.Window.set_default_icon_name('GDB')
+        path = os.path.join(gui.self_dir, 'icons/face-raspberry-symbolic.svg')
+        Gtk.Window.set_default_icon(GdkPixbuf.Pixbuf.new_from_file(path))
         GObject.threads_init()
         Gdk.threads_init()
         _t = _GtkThread()
