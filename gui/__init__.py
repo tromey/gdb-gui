@@ -19,5 +19,6 @@ self_dir = os.path.abspath(os.path.dirname(__file__))
 
 # Import anything that defines a command or parameter.
 import gui.commands
+import gui.params
 import gui.toplevel
 import gui.framecache

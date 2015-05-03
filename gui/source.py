@@ -26,6 +26,7 @@ import gui.toplevel
 import gui.events
 import os.path
 import gui.gdbutil
+import gui.params
 
 from gi.repository import Gtk, GtkSource, GObject, Gdk, GdkPixbuf, Pango
 
@@ -33,6 +34,7 @@ class BufferManager:
     def __init__(self):
         self.buffers = {}
         self.lang_manager = None
+        gui.params.source_theme.set_buffer_manager(self)
 
     def release_buffer(self, buff):
         # FIXME: we should be smart about buffer caching.
@@ -63,6 +65,7 @@ class BufferManager:
 
         buff = GtkSource.Buffer()
         buff.set_language(self.lang_manager.guess_language(filename))
+        buff.set_style_scheme(gui.params.source_theme.get_scheme())
         buff.begin_not_undoable_action()
         try:
             contents = open(filename).read()
@@ -78,6 +81,16 @@ class BufferManager:
 
         self.buffers[filename] = buff
         return buff
+
+    @in_gtk_thread
+    def _do_change_theme(self):
+        new_scheme = gui.params.source_theme.get_scheme()
+        for filename in self.buffers:
+            self.buffers[filename].set_style_scheme(new_scheme)
+
+    @in_gdb_thread
+    def change_theme(self):
+        gui.startup.send_to_gtk(self._do_change_theme)
 
 buffer_manager = BufferManager()
 
