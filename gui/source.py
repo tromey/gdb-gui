@@ -220,9 +220,7 @@ class SourceWindow(gui.updatewindow.UpdateWindow):
         for name in BUTTON_NAMES:
             self.buttons[name] = builder.get_object(name)
 
-        font_desc = Pango.FontDescription('monospace')
-        if font_desc:
-            self.view.modify_font(font_desc)
+        self.view.modify_font(gui.params.font_manager.get_font())
 
         attrs = GtkSource.MarkAttributes()
         # FIXME: really we want a little green dot...
@@ -289,3 +287,7 @@ class SourceWindow(gui.updatewindow.UpdateWindow):
             buffer_manager.release_buffer(old_buffer)
             GObject.idle_add(self._do_scroll, buff, srcline - 1)
             # self.view.scroll_to_iter(buff.get_iter_at_line(srcline), 0.0)
+
+    @in_gtk_thread
+    def set_font(self, pango_font):
+        self.view.modify_font(pango_font)

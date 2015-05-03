@@ -16,10 +16,12 @@
 # Parameters
 
 import gdb
-from gi.repository import GtkSource
 import gui.startup
-from gui.startup import in_gdb_thread, in_gtk_thread
 import gui.storage
+import gui.toplevel
+
+from gui.startup import in_gdb_thread, in_gtk_thread
+from gi.repository import GtkSource, Pango
 
 class _SetBase(gdb.Command):
     def __init__(self):
@@ -62,6 +64,34 @@ class _Theme(gdb.Parameter):
         self.buffer_manager.change_theme()
         return ""
 
+class _Font(gdb.Parameter):
+    def __init__(self):
+        self.manager = GtkSource.StyleSchemeManager.get_default()
+        self.storage = gui.storage.storage_manager
+        super(_Font, self).__init__('gui font', gdb.COMMAND_NONE,
+                                    gdb.PARAM_STRING)
+        val = self.storage.get('font')
+        if val is not None:
+            self.value = val
+        else:
+            self.value = 'monospace'
+
+    @in_gtk_thread
+    def get_font(self):
+        # Sorta racy
+        return Pango.FontDescription(self.value)
+
+    @in_gdb_thread
+    def get_show_string(self, pvalue):
+        return "The current font is: " + self.value
+
+    @in_gdb_thread
+    def get_set_string(self):
+        gui.toplevel.state.set_font(self.value)
+        self.storage.set('font', self.value)
+        return ""
+
 _SetBase()
 _ShowBase()
 source_theme = _Theme()
+font_manager = _Font()

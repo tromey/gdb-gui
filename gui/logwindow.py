@@ -18,8 +18,10 @@
 import gdb
 import gui.toplevel
 import gui.startup
-from gi.repository import Gtk, Pango
 import functools
+
+from gi.repository import Gtk, Pango
+from gui.startup import in_gtk_thread
 
 default_log_window = None
 
@@ -36,11 +38,15 @@ class LogWindow(gui.toplevel.Toplevel):
 
         self.window = builder.get_object('logwindow')
         self.view = builder.get_object('textview')
-        self.view.modify_font(Pango.FontDescription('monospace'))
+        self.view.modify_font(gui.params.font_manager.get_font())
         self.buffer = builder.get_object('buffer')
 
         self.window.set_title('GDB Log @%d' % self.number)
         self.window.show()
+
+    @in_gtk_thread
+    def set_font(self, font):
+        self.view.modify_font(Pango.FontDescription(font_name))
 
     def deleted(self, *args):
         if default_log_window == self:
@@ -52,3 +58,7 @@ class LogWindow(gui.toplevel.Toplevel):
 
     def append(self, text):
         gui.startup.send_to_gtk(functools.partial(self._append, text))
+
+    @in_gtk_thread
+    def set_font(self, pango_font):
+        self.view.modify_font(pango_font)

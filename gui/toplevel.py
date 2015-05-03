@@ -1,4 +1,4 @@
-# Copyright (C) 2013 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2013, 2015 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +18,8 @@
 import gdb
 import gui.startup
 import threading
+from gi.repository import Pango
+from gui.startup import in_gdb_thread, in_gtk_thread
 
 class _ToplevelState(object):
     def __init__(self):
@@ -57,6 +59,17 @@ class _ToplevelState(object):
                     print ' %3d    %s' % (window.number,
                                           window.window.get_title())
 
+    @in_gtk_thread
+    def _do_set_font(self, font_name):
+        pango_font = Pango.FontDescription(font_name)
+        with self.toplevel_lock:
+            for num in self.toplevels:
+                self.toplevels[num].set_font(pango_font)
+
+    @in_gdb_thread
+    def set_font(self, font_name):
+        gui.startup.send_to_gtk(lambda: self._do_set_font(font_name))
+
 state = _ToplevelState()
 
 class Toplevel(object):
@@ -72,3 +85,9 @@ class Toplevel(object):
 
     def valid(self):
         return self.window is not None
+
+    @in_gtk_thread
+    def set_font(self, pango_font):
+        # Subclasses can override this to be notified when the user
+        # changes the font.
+        pass
