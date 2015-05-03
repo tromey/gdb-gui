@@ -19,6 +19,7 @@ import gdb
 from gi.repository import GtkSource
 import gui.startup
 from gui.startup import in_gdb_thread, in_gtk_thread
+import gui.storage
 
 class _SetBase(gdb.Command):
     def __init__(self):
@@ -33,10 +34,14 @@ class _ShowBase(gdb.Command):
 class _Theme(gdb.Parameter):
     def __init__(self):
         self.manager = GtkSource.StyleSchemeManager.get_default()
+        self.storage = gui.storage.storage_manager
         super(_Theme, self).__init__('gui theme', gdb.COMMAND_NONE,
                                      gdb.PARAM_ENUM,
                                      # Probably the wrong thread.
                                      self.manager.get_scheme_ids())
+        val = self.storage.get('theme')
+        if val is not None:
+            self.value = val
 
     @in_gdb_thread
     def set_buffer_manager(self, b):
@@ -53,6 +58,7 @@ class _Theme(gdb.Parameter):
 
     @in_gdb_thread
     def get_set_string(self):
+        self.storage.set('theme', self.value)
         self.buffer_manager.change_theme()
         return ""
 
