@@ -70,6 +70,10 @@ class _ToplevelState(object):
     def set_font(self, font_name):
         gui.startup.send_to_gtk(lambda: self._do_set_font(font_name))
 
+    @in_gtk_thread
+    def windows(self):
+        return self.toplevels.values()
+
 state = _ToplevelState()
 
 class Toplevel(object):
