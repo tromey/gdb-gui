@@ -51,6 +51,10 @@ class LogWindow(gui.toplevel.Toplevel):
     def deleted(self, *args):
         if default_log_window == self:
             default_log_window = None
+            for window in gui.toplevel.state.windows():
+                if isinstance(window, LogWindow):
+                    default_log_window = window
+                    break
 
     def _append(self, text):
         self.buffer.insert_at_cursor(text)
