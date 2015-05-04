@@ -41,19 +41,21 @@ class LogWindow(gui.toplevel.Toplevel):
         self.view.modify_font(gui.params.font_manager.get_font())
         self.buffer = builder.get_object('buffer')
 
-        self.window.set_title('GDB Log @%d' % self.number)
+        self.update_title()
         self.window.show()
 
     @in_gtk_thread
     def set_font(self, font):
         self.view.modify_font(Pango.FontDescription(font_name))
 
+    @in_gtk_thread
     def deleted(self, *args):
         if default_log_window == self:
             default_log_window = None
             for window in gui.toplevel.state.windows():
                 if isinstance(window, LogWindow):
                     default_log_window = window
+                    window.update_title()
                     break
 
     def _append(self, text):
@@ -66,3 +68,10 @@ class LogWindow(gui.toplevel.Toplevel):
     @in_gtk_thread
     def set_font(self, pango_font):
         self.view.modify_font(pango_font)
+
+    @in_gtk_thread
+    def update_title(self):
+        title = 'GDB Log @%d' % self.number
+        if self is default_log_window:
+            title += ' [Default]'
+        self.window.set_title(title)
