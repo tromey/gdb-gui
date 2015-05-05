@@ -74,6 +74,16 @@ class _ToplevelState(object):
         gui.startup.send_to_gtk(lambda: self._do_set_font(font_name))
 
     @in_gtk_thread
+    def _do_update_titles(self):
+        with self.toplevel_lock:
+            for num in self.toplevels:
+                self.toplevels[num].update_title()
+
+    @in_gdb_thread
+    def update_titles(self):
+        gui.startup.send_to_gtk(lambda: self._do_update_titles))
+
+    @in_gtk_thread
     def windows(self):
         return self.toplevels.values()
 

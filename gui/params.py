@@ -167,7 +167,7 @@ class _Title(_StoredParameter):
     @in_gdb_thread
     def get_set_string(self):
         super(_Title, self).get_set_string()
-        # gui.toplevel.state.set_font(self.value)
+        gui.toplevel.state.update_titles()
         return ""
 
 _SetBase()
