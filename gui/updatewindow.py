@@ -27,8 +27,8 @@ class UpdateWindow(Toplevel):
     In particular, starting or stopping the inferior, or switching
     frames, causes this window to be eligible for updates."""
 
-    def __init__(self):
-        super(UpdateWindow, self).__init__()
+    def __init__(self, window_type):
+        super(UpdateWindow, self).__init__(window_type)
         gui.startup.send_to_gtk(self.gtk_initialize)
         self._connect_events()
         # Display the data now.

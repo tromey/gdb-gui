@@ -19,7 +19,6 @@ import gdb
 import gui
 import gui.updatewindow
 from gui.invoker import Invoker
-from gui.toplevel import Toplevel
 import gui.startup
 from gui.startup import in_gdb_thread, in_gtk_thread
 import gui.toplevel
@@ -197,7 +196,7 @@ class SourceWindow(gui.updatewindow.UpdateWindow):
         return GdkPixbuf.Pixbuf.new_from_file(path)
 
     def __init__(self):
-        super(SourceWindow, self).__init__()
+        super(SourceWindow, self).__init__('source')
         gdb.events.cont.connect(self._on_cont_event)
 
     @in_gtk_thread
@@ -233,7 +232,7 @@ class SourceWindow(gui.updatewindow.UpdateWindow):
 
         lru_handler.add(self)
 
-        self.window.set_title('GDB Source @%d' % self.number)
+        self.update_title()
         self.window.show()
 
     @in_gtk_thread
@@ -281,9 +280,9 @@ class SourceWindow(gui.updatewindow.UpdateWindow):
         if buff is not None:
             old_buffer = self.view.get_buffer()
             self.view.set_buffer(buff)
-            # Might be good to let the user pick the format...
-            self.window.set_title('%s - GDB Source @%d'
-                                  % (os.path.basename(srcfile), self.number))
+            self.fullname = srcfile
+            self.basename = os.path.basename(srcfile)
+            self.update_title()
             buffer_manager.release_buffer(old_buffer)
             GObject.idle_add(self._do_scroll, buff, srcline - 1)
             # self.view.scroll_to_iter(buff.get_iter_at_line(srcline), 0.0)

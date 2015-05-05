@@ -24,6 +24,11 @@ A few notes on gdb improvements that would help the GUI:
   documented.  And, "set font" prints a line unconditionally, see bug
   14513.
 
+* Trying to add a set/show prefix is hard.  I had to add two separate
+  commands and then couldn't get "set gui" (without further args) to
+  work the way that it does in gdb.  Maybe it should just invoke
+  "help set gui"?
+
 ================================================================
 
 Windows

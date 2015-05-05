@@ -27,9 +27,13 @@ default_log_window = None
 
 class LogWindow(gui.toplevel.Toplevel):
     def __init__(self):
-        super(LogWindow, self).__init__()
+        super(LogWindow, self).__init__('log')
         global default_log_window
+        if default_log_window is not None:
+            default_log_window.default = ''
         default_log_window = self
+        # For the window title.
+        self.default = ' [Default]'
         gui.startup.send_to_gtk(self._initialize)
 
     def _initialize(self):
@@ -55,6 +59,7 @@ class LogWindow(gui.toplevel.Toplevel):
             for window in gui.toplevel.state.windows():
                 if isinstance(window, LogWindow):
                     default_log_window = window
+                    window.default = ' [Default]'
                     window.update_title()
                     break
 
@@ -68,10 +73,3 @@ class LogWindow(gui.toplevel.Toplevel):
     @in_gtk_thread
     def set_font(self, pango_font):
         self.view.modify_font(pango_font)
-
-    @in_gtk_thread
-    def update_title(self):
-        title = 'GDB Log @%d' % self.number
-        if self is default_log_window:
-            title += ' [Default]'
-        self.window.set_title(title)

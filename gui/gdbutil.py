@@ -16,7 +16,24 @@
 # Little gdb utilities.
 
 import gdb
+import gdb.prompt
+
 from gui.startup import in_gdb_thread
+
+gui_prompt_substitutions = dict(gdb.prompt.prompt_substitutions)
+
+_current_window_for_prompt = None
+
+def _prompt_window(attr):
+    if _current_window_for_prompt is None:
+        return ''
+    if attr is None:
+        return ''
+    if not hasattr(_current_window_for_prompt, attr):
+        return None
+    return str(getattr(_current_window_for_prompt, attr))
+
+gui_prompt_substitutions['W'] = _prompt_window
 
 @in_gdb_thread
 def is_running():
@@ -26,3 +43,31 @@ def is_running():
     if gdb.selected_thread() and gdb.selected_thread().is_running():
         return True
     return False
+
+# GDB's API should do this...
+def substitute_prompt_with_window(prompt, window):
+    global _current_window_for_prompt
+    global gui_prompt_substitutions
+    save = gdb.prompt.prompt_substitutions
+    _current_window_for_prompt = window
+    gdb.prompt.prompt_substitutions = gui_prompt_substitutions
+    try:
+        result = gdb.prompt.substitute_prompt(prompt)
+    finally:
+        gdb.prompt.prompt_substitutions = save
+        _current_window_for_prompt = None
+    return result
+
+# GDB's API should do this...
+def prompt_help_with_window(window):
+    global _current_window_for_prompt
+    global gui_prompt_substitutions
+    save = gdb.prompt.prompt_substitutions
+    _current_window_for_prompt = window
+    gdb.prompt.prompt_substitutions = gui_prompt_substitutions
+    try:
+        result = gdb.prompt.prompt_help()
+    finally:
+        gdb.prompt.prompt_substitutions = save
+        _current_window_for_prompt = None
+    return result

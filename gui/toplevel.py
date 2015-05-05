@@ -16,8 +16,11 @@
 # Toplevel handling.
 
 import gdb
+import gui.gdbutil
+import gui.params
 import gui.startup
 import threading
+
 from gi.repository import Pango
 from gui.startup import in_gdb_thread, in_gtk_thread
 
@@ -77,10 +80,11 @@ class _ToplevelState(object):
 state = _ToplevelState()
 
 class Toplevel(object):
-    def __init__(self):
+    def __init__(self, window_type):
         state.add(self)
         # The subclass must set this.
         self.window = None
+        self.window_type = window_type
 
     def destroy(self):
         state.remove(self)
@@ -95,3 +99,9 @@ class Toplevel(object):
         # Subclasses can override this to be notified when the user
         # changes the font.
         pass
+
+    @in_gtk_thread
+    def update_title(self):
+        fmt = gui.params.title_params[self.window_type].value
+        title = gui.gdbutil.substitute_prompt_with_window(fmt, self)
+        self.window.set_title(title)

@@ -32,7 +32,7 @@ class DisplayWindow(gui.updatewindow.UpdateWindow):
         self.command = command
         self.diff = diff
         self.last_text = None
-        super(DisplayWindow, self).__init__()
+        super(DisplayWindow, self).__init__('display')
 
     @in_gdb_thread
     def on_event(self):
@@ -56,7 +56,7 @@ class DisplayWindow(gui.updatewindow.UpdateWindow):
         if self.diff:
             self.tag = self.buffer.create_tag('new', foreground = 'red')
 
-        self.window.set_title('GDB "%s" @%d' % (self.command, self.number))
+        self.update_title()
         self.window.show()
 
     def _update(self, text):

@@ -16,6 +16,7 @@
 # Parameters
 
 import gdb
+import gdb.prompt
 import gui.startup
 import gui.storage
 import gui.toplevel
@@ -30,12 +31,26 @@ class _SetBase(gdb.Command):
         super(_SetBase, self).__init__('set gui', gdb.COMMAND_NONE,
                                        prefix = True)
 
+class _SetTitleBase(gdb.Command):
+    """Generic command for modifying GUI window titles."""
+
+    def __init__(self):
+        super(_SetTitleBase, self).__init__('set gui title', gdb.COMMAND_NONE,
+                                            prefix = True)
+
 class _ShowBase(gdb.Command):
     """Generic command for showing GUI settings."""
 
     def __init__(self):
         super(_ShowBase, self).__init__('show gui', gdb.COMMAND_NONE,
                                         prefix = True)
+
+class _ShowTitleBase(gdb.Command):
+    """Generic command for showing GUI window titles."""
+
+    def __init__(self):
+        super(_ShowTitleBase, self).__init__('show gui title', gdb.COMMAND_NONE,
+                                             prefix = True)
 
 class _Theme(gdb.Parameter):
     # Silly gdb requirement.
@@ -107,7 +122,45 @@ class _Font(gdb.Parameter):
         self.storage.set('font', self.value)
         return ""
 
+title_params = {}
+
+class _Title(gdb.Parameter):
+    # Silly gdb requirement.
+    ""
+
+    def __init__(self, name, default):
+        title_params[name] = self
+        self.name = name
+        self.set_doc = "Set the %s window title format." % self.name
+        self.show_doc = "Show the %s window title format." % self.name
+        self.manager = GtkSource.StyleSchemeManager.get_default()
+        self.storage = gui.storage.storage_manager
+        super(_Title, self).__init__('gui title %s' % name, gdb.COMMAND_NONE,
+                                     gdb.PARAM_STRING)
+        val = self.storage.get('title-%s' % name)
+        if val is not None:
+            self.value = val
+        else:
+            self.value = default
+
+    @in_gdb_thread
+    def get_show_string(self, pvalue):
+        return "The current title format for the %s is: %s" % (self.name,
+                                                               self.value)
+
+    @in_gdb_thread
+    def get_set_string(self):
+        # gui.toplevel.state.set_font(self.value)
+        self.storage.set('title-%s' % self.name, self.value)
+        return ""
+
 _SetBase()
+_SetTitleBase()
 _ShowBase()
+_ShowTitleBase()
 source_theme = _Theme()
 font_manager = _Font()
+
+_Title('source', '\\W{basename} [GDB Source @\\W{number}]')
+_Title('display', '\\W{command} [GDB Display @\\W{number}]')
+_Title('log', '[GDB Log @\\W{number}]\\W{default}')
