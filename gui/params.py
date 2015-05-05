@@ -24,16 +24,23 @@ from gui.startup import in_gdb_thread, in_gtk_thread
 from gi.repository import GtkSource, Pango
 
 class _SetBase(gdb.Command):
+    """Generic command for modifying GUI settings."""
+
     def __init__(self):
         super(_SetBase, self).__init__('set gui', gdb.COMMAND_NONE,
                                        prefix = True)
 
 class _ShowBase(gdb.Command):
+    """Generic command for showing GUI settings."""
+
     def __init__(self):
         super(_ShowBase, self).__init__('show gui', gdb.COMMAND_NONE,
                                         prefix = True)
 
 class _Theme(gdb.Parameter):
+    set_doc = "Set the source window theme."
+    show_doc = "Show the source window theme."
+
     def __init__(self):
         self.manager = GtkSource.StyleSchemeManager.get_default()
         self.storage = gui.storage.storage_manager
@@ -65,6 +72,9 @@ class _Theme(gdb.Parameter):
         return ""
 
 class _Font(gdb.Parameter):
+    set_doc = "Set the source window font."
+    show_doc = "Show the source window font."
+
     def __init__(self):
         self.manager = GtkSource.StyleSchemeManager.get_default()
         self.storage = gui.storage.storage_manager
