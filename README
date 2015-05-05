@@ -25,7 +25,7 @@ On Fedora I think this suffices:
     sudo yum install gdb python-devel gtksourceview3 pygobject3
 
 After you install this, type "make".  Now, start gdb and source the
-"SourceMe.py" file.  This sets everything up.  If you want it to
+"gdb-gui.py" file.  This sets everything up.  If you want it to
 always be available, you can use "make hack-gdbinit", which will add
 the appropriate "source" line to your ~/.gdbinit.
 

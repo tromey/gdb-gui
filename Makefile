@@ -1,18 +1,18 @@
-all: SourceMe.py gui/fix_signals.so
+all: gdb-gui.py gui/fix_signals.so
 	@:
 
-SourceMe.py: SourceMe.py.in
-	sed -e "s,HERE,`pwd`," < SourceMe.py.in > SourceMe.py
+gdb-gui.py: gdb-gui.py.in
+	sed -e "s,HERE,`pwd`," < gdb-gui.py.in > gdb-gui.py
 
 gui/fix_signals.so: gui/fix-signals.c
 	gcc -shared -fPIC -g -o gui/fix_signals.so gui/fix-signals.c `pkg-config --cflags python` `pkg-config --libs python`
 
 clean:
-	-rm SourceMe.py gui/fix_signals.so
+	-rm gdb-gui.py gui/fix_signals.so
 
 hack-gdbinit:
-	if test -f $$HOME/.gdbinit && `grep -q SourceMe $$HOME/.gdbinit`; then \
+	if test -f $$HOME/.gdbinit && `grep -q gdb-gui $$HOME/.gdbinit`; then \
 	  :; \
 	else \
-	  echo "source `pwd`/SourceMe.py" >> $$HOME/.gdbinit; \
+	  echo "source `pwd`/gdb-gui.py" >> $$HOME/.gdbinit; \
 	fi

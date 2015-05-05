@@ -3,3 +3,4 @@
 *.o
 *.so
 SourceMe.py
+gdb-gui.py
