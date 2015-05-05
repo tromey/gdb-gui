@@ -14,6 +14,7 @@ A few notes on gdb improvements that would help the GUI:
     http://sourceware.org/bugzilla/show_bug.cgi?id=15620
   * No "new shared library" event.
     http://sourceware.org/bugzilla/show_bug.cgi?id=15621
+    [ we can use the new objfile event instead ]
   * No "new thread" event.
     http://sourceware.org/bugzilla/show_bug.cgi?id=15622
   * No "frame selection" event, e.g. when user types "up".
