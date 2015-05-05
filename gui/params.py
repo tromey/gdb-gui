@@ -52,7 +52,34 @@ class _ShowTitleBase(gdb.Command):
         super(_ShowTitleBase, self).__init__('show gui title', gdb.COMMAND_NONE,
                                              prefix = True)
 
-class _Theme(gdb.Parameter):
+# Like gdb.Parameter, but has a default and automatically handles
+# storage.
+class _StoredParameter(gdb.Parameter):
+    # NAME_FORMAT is like "%s" - NAME is substituted.
+    # To construct the parameter name, "gui " is prefixed.
+    def __init__(self, name_format, name, default, *args):
+        full_name = 'gui ' + name_format % name
+        self.storage_name = '-'.join((name_format % name).split(' '))
+        storage = gui.storage.storage_manager
+        super(_StoredParameter, self).__init__(full_name, *args)
+        val = storage.get(self.storage_name)
+        # Don't record the first setting.
+        self.storage = None
+        if val is None:
+            val = default
+        if val is not None:
+            self.value = val
+        # Start saving changes.
+        self.storage = storage
+        self.name = name
+
+    @in_gdb_thread
+    def get_set_string(self):
+        if self.storage is not None:
+            self.storage.set(self.storage_name, self.value)
+        return ""
+
+class _Theme(_StoredParameter):
     # Silly gdb requirement.
     ""
 
@@ -61,14 +88,10 @@ class _Theme(gdb.Parameter):
 
     def __init__(self):
         self.manager = GtkSource.StyleSchemeManager.get_default()
-        self.storage = gui.storage.storage_manager
-        super(_Theme, self).__init__('gui theme', gdb.COMMAND_NONE,
-                                     gdb.PARAM_ENUM,
+        super(_Theme, self).__init__('%s', 'theme', None,
+                                     gdb.COMMAND_NONE, gdb.PARAM_ENUM,
                                      # Probably the wrong thread.
                                      self.manager.get_scheme_ids())
-        val = self.storage.get('theme')
-        if val is not None:
-            self.value = val
 
     @in_gdb_thread
     def set_buffer_manager(self, b):
@@ -85,11 +108,11 @@ class _Theme(gdb.Parameter):
 
     @in_gdb_thread
     def get_set_string(self):
-        self.storage.set('theme', self.value)
+        super(_Theme, self).get_set_string()
         self.buffer_manager.change_theme()
         return ""
 
-class _Font(gdb.Parameter):
+class _Font(_StoredParameter):
     # Silly gdb requirement.
     ""
 
@@ -98,14 +121,8 @@ class _Font(gdb.Parameter):
 
     def __init__(self):
         self.manager = GtkSource.StyleSchemeManager.get_default()
-        self.storage = gui.storage.storage_manager
-        super(_Font, self).__init__('gui font', gdb.COMMAND_NONE,
-                                    gdb.PARAM_STRING)
-        val = self.storage.get('font')
-        if val is not None:
-            self.value = val
-        else:
-            self.value = 'monospace'
+        super(_Font, self).__init__('%s', 'font', 'monospace',
+                                    gdb.COMMAND_NONE, gdb.PARAM_STRING)
 
     @in_gtk_thread
     def get_font(self):
@@ -119,12 +136,12 @@ class _Font(gdb.Parameter):
     @in_gdb_thread
     def get_set_string(self):
         gui.toplevel.state.set_font(self.value)
-        self.storage.set('font', self.value)
+        super(_Font, self).get_set_string()
         return ""
 
 title_params = {}
 
-class _Title(gdb.Parameter):
+class _Title(_StoredParameter):
     # Silly gdb requirement.
     ""
 
@@ -134,9 +151,8 @@ class _Title(gdb.Parameter):
         self.set_doc = "Set the %s window title format." % self.name
         self.show_doc = "Show the %s window title format." % self.name
         self.manager = GtkSource.StyleSchemeManager.get_default()
-        self.storage = gui.storage.storage_manager
-        super(_Title, self).__init__('gui title %s' % name, gdb.COMMAND_NONE,
-                                     gdb.PARAM_STRING)
+        super(_Title, self).__init__('title %s', name, default,
+                                     gdb.COMMAND_NONE, gdb.PARAM_STRING)
         val = self.storage.get('title-%s' % name)
         if val is not None:
             self.value = val
@@ -150,8 +166,8 @@ class _Title(gdb.Parameter):
 
     @in_gdb_thread
     def get_set_string(self):
+        super(_Title, self).get_set_string()
         # gui.toplevel.state.set_font(self.value)
-        self.storage.set('title-%s' % self.name, self.value)
         return ""
 
 _SetBase()
