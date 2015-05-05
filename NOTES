@@ -19,6 +19,11 @@ A few notes on gdb improvements that would help the GUI:
   * No "frame selection" event, e.g. when user types "up".
     https://sourceware.org/bugzilla/show_bug.cgi?id=13598
 
+* The "set font" and "show font" commands need a bogus doc string to
+  avoid either a doubled doc line or printing that the command isn't
+  documented.  And, "set font" prints a line unconditionally, see bug
+  14513.
+
 ================================================================
 
 Windows

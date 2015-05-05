@@ -38,6 +38,9 @@ class _ShowBase(gdb.Command):
                                         prefix = True)
 
 class _Theme(gdb.Parameter):
+    # Silly gdb requirement.
+    ""
+
     set_doc = "Set the source window theme."
     show_doc = "Show the source window theme."
 
@@ -72,6 +75,9 @@ class _Theme(gdb.Parameter):
         return ""
 
 class _Font(gdb.Parameter):
+    # Silly gdb requirement.
+    ""
+
     set_doc = "Set the source window font."
     show_doc = "Show the source window font."
 
