@@ -1,4 +1,4 @@
-gdb-gui
+## Overview
 
 This is gdb-gui, a GUI for gdb.  This GUI differs from existing gdb
 GUIs in a few ways:
@@ -13,6 +13,7 @@ GUIs in a few ways:
 
 * It is totally incomplete.
 
+## Installing
 
 To get started, install the prerequisites.  You'll need a
 Python-enabled gdb, PyGObject, and PyGktSourceView.  (And maybe more
@@ -22,19 +23,34 @@ here.
 
 On Fedora I think this suffices:
 
-    sudo yum install gdb python-devel gtksourceview3 pygobject3
+```
+sudo yum install gdb python-devel gtksourceview3 pygobject3
+```
 
-After you install this, type "make".  Now, start gdb and source the
-"gdb-gui.py" file.  This sets everything up.  If you want it to
-always be available, you can use "make hack-gdbinit", which will add
-the appropriate "source" line to your ~/.gdbinit.
+Now type `make` to build the needed shared library.
 
-This adds a new "gui" command and various subcommands to gdb.
+The simplest way to make the GUI always be available is to then use:
 
-A simple subcommand to try is "gui source", which pops up a source
+```
+make hack-gdbinit
+```
+
+This will edit your `~/.gdbinit` to `source` the appropriate file.  If
+you don't want to do this, you can just source the `gdb-gui.py` file
+from gdb at any time.
+
+## Using the GUI
+
+This package adds a new `gui` command and various subcommands to gdb.
+It also adds some new `set gui` parameters.
+
+A simple command to try is `gui source`, which pops up a source
 window.  The source window will automatically track your progress when
 debugging.  You can make multiple source windows; they will be reused
-in an LRU fashion.
+in an LRU fashion.  You can set the theme, font, and title format of
+source windows using the appropriate `set gui` commands.
+
+## Hacking
 
 If you want to hack on this, you will need Glade to edit the UI
 elements.  For Fedora 18, you'll need a special hack to make the
