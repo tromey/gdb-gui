@@ -35,15 +35,6 @@ def _prompt_window(attr):
 
 gui_prompt_substitutions['W'] = _prompt_window
 
-@in_gdb_thread
-def is_running():
-    """Return True if the inferior is running."""
-    # This seems good enough for now.
-    # We can deal with scheduler locking and the rest later.
-    if gdb.selected_thread() and gdb.selected_thread().is_running():
-        return True
-    return False
-
 # GDB's API should do this...
 def substitute_prompt_with_window(prompt, window):
     global _current_window_for_prompt
@@ -71,3 +62,12 @@ def prompt_help_with_window(window):
         gdb.prompt.prompt_substitutions = save
         _current_window_for_prompt = None
     return result
+
+@in_gdb_thread
+def is_running():
+    """Return True if the inferior is running."""
+    # This seems good enough for now.
+    # We can deal with scheduler locking and the rest later.
+    if gdb.selected_thread() and gdb.selected_thread().is_running():
+        return True
+    return False
