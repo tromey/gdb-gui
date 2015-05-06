@@ -81,7 +81,7 @@ class _ToplevelState(object):
 
     @in_gdb_thread
     def update_titles(self):
-        gui.startup.send_to_gtk(lambda: self._do_update_titles))
+        gui.startup.send_to_gtk(lambda: self._do_update_titles)
 
     @in_gtk_thread
     def windows(self):
