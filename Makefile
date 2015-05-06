@@ -10,7 +10,7 @@ gui/fix_signals.so: gui/fix-signals.c
 clean:
 	-rm gdb-gui.py gui/fix_signals.so
 
-hack-gdbinit:
+hack-gdbinit: all
 	if test -f $$HOME/.gdbinit && `grep -q gdb-gui $$HOME/.gdbinit`; then \
 	  :; \
 	else \
