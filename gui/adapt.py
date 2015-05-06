@@ -19,16 +19,28 @@ import gdb
 import gui.params
 
 bugs = {
-    "15620": """Your gdb doesn't have a "new breakpoint" event.
+    15620: """Your gdb doesn't have a "new breakpoint" event.
 This means that the source windows will not show you where
 breakpoints have been set.""",
 
-    "13598": """Your gdb doesn't have a "before prompt" event.
+    13598: """Your gdb doesn't have a "before prompt" event.
 This means that various windows won't be able to react to
 commands like "up" or "down"."""
 }
 
+_warning = "See https://sourceware.org/bugzilla/show_bug.cgi?id=%s for more information."
+
 _first_report = True
 
 def notify_bug(bugno):
-    
+    if not gui.params.warn_missing.value:
+        return
+    if not (bugno in bugs):
+        return
+    print "################"
+    print bugs[bugno]
+    print _warning % bugno
+    print ""
+    print "You can use 'set gui mention-missing off' to disable this message."
+    print "################"
+    del bugs[bugno]

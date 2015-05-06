@@ -15,6 +15,7 @@
 
 import gdb
 import gui.events
+import gui.adapt
 
 _last_selected_frame = None
 
@@ -32,3 +33,5 @@ def check_frame():
 # See my gdb branch on github.
 if hasattr(gdb.events, 'before_prompt'):
     gdb.events.before_prompt.connect(check_frame)
+else:
+    gui.adapt.notify_bug(13598)

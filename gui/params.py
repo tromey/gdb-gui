@@ -170,6 +170,25 @@ class _Title(_StoredParameter):
         gui.toplevel.state.update_titles()
         return ""
 
+class _Missing(_StoredParameter):
+    # Silly gdb requirement.
+    ""
+
+    set_doc = "Set whether to mention missing gdb features."
+    show_doc = "Show whether to mention missing gdb features."
+
+    def __init__(self):
+        super(_Missing, self).__init__('%s', 'mention-missing', True,
+                                       gdb.COMMAND_NONE, gdb.PARAM_BOOLEAN)
+
+    @in_gdb_thread
+    def get_show_string(self, pvalue):
+        if self.value:
+            v = "on"
+        else:
+            v = "off"
+        return "Whether to warn about missing gdb features: " + v
+
 _SetBase()
 _SetTitleBase()
 _ShowBase()
@@ -180,3 +199,5 @@ font_manager = _Font()
 _Title('source', '\\W{basename} [GDB Source @\\W{number}]')
 _Title('display', '\\W{command} [GDB Display @\\W{number}]')
 _Title('log', '[GDB Log @\\W{number}]\\W{default}')
+
+warn_missing = _Missing()
