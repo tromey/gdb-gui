@@ -3,11 +3,6 @@
 <interface>
   <requires lib="gtk+" version="3.0"/>
   <requires lib="gtksourceview" version="3.0"/>
-  <object class="GtkImage" id="image1">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="pixbuf">icons/run-to-cursor.xpm</property>
-  </object>
   <object class="GtkImage" id="image2">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -45,7 +40,7 @@
                 <property name="tooltip_text" translatable="yes">Continue execution</property>
                 <property name="label" translatable="yes">Continue</property>
                 <property name="use_underline">True</property>
-                <property name="icon_widget">image1</property>
+                <property name="stock_id">gtk-media-forward</property>
                 <signal name="clicked" handler="do_continue" swapped="no"/>
                 <accelerator key="c" signal="clicked"/>
               </object>
@@ -112,6 +107,46 @@
                 <property name="icon_widget">image4</property>
                 <signal name="clicked" handler="do_finish" swapped="no"/>
                 <accelerator key="f" signal="clicked"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSeparatorToolItem" id="sep">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="up">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Up one frame</property>
+                <property name="label" translatable="yes">Up</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-go-up</property>
+                <accelerator key="u" signal="clicked"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="down">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Down one frame</property>
+                <property name="label" translatable="yes">Down</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-go-down</property>
+                <accelerator key="d" signal="clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>

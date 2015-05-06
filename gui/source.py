@@ -188,7 +188,7 @@ class LRUHandler:
 
 lru_handler = LRUHandler()
 
-BUTTON_NAMES = ["step", "next", "continue", "finish", "stop"]
+BUTTON_NAMES = ["step", "next", "continue", "finish", "stop", "up", "down"]
 
 class SourceWindow(gui.updatewindow.UpdateWindow):
     def _get_pixmap(self, filename):
@@ -198,6 +198,8 @@ class SourceWindow(gui.updatewindow.UpdateWindow):
     def __init__(self):
         super(SourceWindow, self).__init__('source')
         gdb.events.cont.connect(self._on_cont_event)
+        # Update the buttons.
+        self.on_event()
 
     @in_gtk_thread
     def gtk_initialize(self):
@@ -208,6 +210,8 @@ class SourceWindow(gui.updatewindow.UpdateWindow):
         self.do_continue = Invoker("continue")
         self.do_finish = Invoker("finish")
         self.do_stop = Invoker("interrupt")
+        self.do_up = Invoker("up")
+        self.do_down = Invoker("down")
 
         builder = gui.startup.create_builder('sourcewindow.xml')
         builder.connect_signals(self)
