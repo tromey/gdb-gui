@@ -224,6 +224,8 @@ class SourceWindow(gui.updatewindow.UpdateWindow):
             self.buttons[name] = builder.get_object(name)
 
         self.view.modify_font(gui.params.font_manager.get_font())
+        self.view.set_show_line_numbers(gui.params.line_numbers.value)
+        self.view.set_tab_width(gui.params.tab_width.value)
 
         attrs = GtkSource.MarkAttributes()
         # FIXME: really we want a little green dot...
@@ -294,3 +296,11 @@ class SourceWindow(gui.updatewindow.UpdateWindow):
     @in_gtk_thread
     def set_font(self, pango_font):
         self.view.modify_font(pango_font)
+
+    @in_gtk_thread
+    def set_line_numbers(self, want_lines):
+        self.view.set_show_line_numbers(want_lines)
+
+    @in_gtk_thread
+    def set_tab_width(self, width):
+        self.view.set_tab_width(width)

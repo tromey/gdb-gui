@@ -42,6 +42,16 @@ class StorageManager:
             return self.config.get('general', name)
         return None
 
+    def getboolean(self, name):
+        if self.config.has_option('general', name):
+            return self.config.getboolean('general', name)
+        return None
+
+    def getint(self, name):
+        if self.config.has_option('general', name):
+            return self.config.getint('general', name)
+        return None
+
     def set(self, name, value):
         self.config.set('general', name, value)
 

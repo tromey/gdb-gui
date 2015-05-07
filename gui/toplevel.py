@@ -84,6 +84,26 @@ class _ToplevelState(object):
         gui.startup.send_to_gtk(lambda: self._do_update_titles)
 
     @in_gtk_thread
+    def _do_set_line_numbers(self, want_lines):
+        with self.toplevel_lock:
+            for num in self.toplevels:
+                self.toplevels[num].set_line_numbers(want_lines)
+
+    @in_gdb_thread
+    def set_line_numbers(self, want_lines):
+        gui.startup.send_to_gtk(lambda: self._do_set_line_numbers(want_lines))
+
+    @in_gtk_thread
+    def _do_set_tab_width(self, width):
+        with self.toplevel_lock:
+            for num in self.toplevels:
+                self.toplevels[num].set_title(width)
+
+    @in_gdb_thread
+    def set_tab_width(self, width):
+        gui.startup.send_to_gtk(lambda: self._do_set_tab_width(width))
+
+    @in_gtk_thread
     def windows(self):
         return self.toplevels.values()
 
@@ -115,3 +135,11 @@ class Toplevel(object):
         fmt = gui.params.title_params[self.window_type].value
         title = gui.gdbutil.substitute_prompt_with_window(fmt, self)
         self.window.set_title(title)
+
+    @in_gtk_thread
+    def set_line_numbers(self, want_lines):
+        pass
+
+    @in_gtk_thread
+    def set_tab_width(self, width):
+        pass

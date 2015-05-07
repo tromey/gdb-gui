@@ -57,12 +57,20 @@ class _ShowTitleBase(gdb.Command):
 class _StoredParameter(gdb.Parameter):
     # NAME_FORMAT is like "%s" - NAME is substituted.
     # To construct the parameter name, "gui " is prefixed.
-    def __init__(self, name_format, name, default, *args):
+    def __init__(self, name_format, name, default, c_class, p_kind, *args):
         full_name = 'gui ' + name_format % name
         self.storage_name = '-'.join((name_format % name).split(' '))
         storage = gui.storage.storage_manager
-        super(_StoredParameter, self).__init__(full_name, *args)
-        val = storage.get(self.storage_name)
+        super(_StoredParameter, self).__init__(full_name, c_class, p_kind,
+                                               *args)
+        if p_kind is gdb.PARAM_BOOLEAN:
+            val = storage.getboolean(self.storage_name)
+        elif p_kind is gdb.PARAM_STRING or p_kind is gdb.PARAM_ENUM:
+            val = storage.get(self.storage_name)
+        elif p_kind is gdb.PARAM_ZINTEGER:
+            val = storage.getint(self.storage_name)
+        else:
+            raise "WHOOPS"
         # Don't record the first setting.
         self.storage = None
         if val is None:
@@ -189,6 +197,71 @@ class _Missing(_StoredParameter):
             v = "off"
         return "Whether to warn about missing gdb features: " + v
 
+class _Lines(_StoredParameter):
+    # Silly gdb requirement.
+    ""
+
+    set_doc = "Set whether to display line numbers in the source window."
+    show_doc = "Show whether to display line numbers in the source window."
+
+    def __init__(self):
+        super(_Lines, self).__init__('%s', 'line-numbers', False,
+                                     gdb.COMMAND_NONE, gdb.PARAM_BOOLEAN)
+
+    @in_gdb_thread
+    def get_show_string(self, pvalue):
+        return "The current title format for the %s is: %s" % (self.name,
+                                                               self.value)
+
+    @in_gdb_thread
+    def get_set_string(self):
+        super(_Lines, self).get_set_string()
+        gui.toplevel.state.set_line_numbers(self.value)
+        return ""
+
+class _Lines(_StoredParameter):
+    # Silly gdb requirement.
+    ""
+
+    set_doc = "Set whether to display line numbers in the source window."
+    show_doc = "Show whether to display line numbers in the source window."
+
+    def __init__(self):
+        super(_Lines, self).__init__('%s', 'line-numbers', False,
+                                     gdb.COMMAND_NONE, gdb.PARAM_BOOLEAN)
+
+    @in_gdb_thread
+    def get_show_string(self, pvalue):
+        return "Whether to display line numbers in the source window is: %s" % self.value
+
+    @in_gdb_thread
+    def get_set_string(self):
+        super(_Lines, self).get_set_string()
+        gui.toplevel.state.set_line_numbers(self.value)
+        return ""
+
+class _Tabs(_StoredParameter):
+    # Silly gdb requirement.
+    ""
+
+    set_doc = "Set width of tabs in the source window."
+    show_doc = "Show width of tabs in the source window."
+
+    def __init__(self):
+        super(_Tabs, self).__init__('%s', 'tab-width', 8,
+                                    gdb.COMMAND_NONE, gdb.PARAM_ZINTEGER)
+
+    @in_gdb_thread
+    def get_show_string(self, pvalue):
+        return "The tab width in the source window is: %d" % self.value
+
+    @in_gdb_thread
+    def get_set_string(self):
+        super(_Tabs, self).get_set_string()
+        gui.toplevel.state.set_tab_width(self.value)
+        return ""
+
+
 _SetBase()
 _SetTitleBase()
 _ShowBase()
@@ -201,3 +274,5 @@ _Title('display', '\\W{command} [GDB Display @\\W{number}]')
 _Title('log', '[GDB Log @\\W{number}]\\W{default}')
 
 warn_missing = _Missing()
+line_numbers = _Lines()
+tab_width = _Tabs()
