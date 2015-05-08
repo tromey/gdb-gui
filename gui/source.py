@@ -26,6 +26,7 @@ import gui.events
 import os.path
 import gui.gdbutil
 import gui.params
+import gui.bpcache
 
 from gi.repository import Gtk, GtkSource, GObject, Gdk, GdkPixbuf, Pango
 
@@ -34,6 +35,7 @@ class BufferManager:
         self.buffers = {}
         self.lang_manager = None
         gui.params.source_theme.set_buffer_manager(self)
+        gui.events.location_changed.connect(self._location_changed)
 
     def release_buffer(self, buff):
         # FIXME: we should be smart about buffer caching.
@@ -41,10 +43,13 @@ class BufferManager:
 
     @in_gtk_thread
     def _set_marks(self, buffer, line_set):
+        buffer.all_marks = {}
         iter = buffer.get_iter_at_line(0)
         while True:
-            if iter.get_line() + 1 in line_set:
-                mark = buffer.create_source_mark(None, 'executable', iter)
+            line = iter.get_line() + 1
+            if line in line_set:
+                all_marks[line] = buffer.create_source_mark(None, 'executable',
+                                                            iter)
             if not iter.forward_line():
                 break
 
@@ -90,6 +95,26 @@ class BufferManager:
     @in_gdb_thread
     def change_theme(self):
         gui.startup.send_to_gtk(self._do_change_theme)
+
+    @in_gtk_thread
+    def update_breakpoint_location(self, sal, is_set):
+        if is_set:
+            category = 'breakpoint'
+        else:
+            category = 'executable'
+        [fullname, line] = sal
+        if fullname in self.buffers:
+            buffer = self.buffers[fullname]
+            if line in buffer.all_marks:
+                if buffer.all_marks[line].category is not category:
+                    iter = buffer.get_iter_at_line(line - 1)
+                    buffer.all_marks[line] = buffer.create_source_mark(None,
+                                                                       category,
+                                                                       iter)
+
+    @in_gdb_thread
+    def _location_changed(self, loc, is_set):
+        gui.startup.send_to_gtk(self.update_breakpoint_location)
 
 buffer_manager = BufferManager()
 

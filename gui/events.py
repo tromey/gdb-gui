@@ -1,4 +1,4 @@
-# Copyright (C) 2013 Tom Tromey <tom@trolley.com>
+# Copyright (C) 2013, 2015 Tom Tromey <tom@trolley.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,8 +25,9 @@ class _Event(object):
     def disconnect(self, callback):
         self.funcs.remove(callback)
 
-    def post(self):
+    def post(self, *args, **kwargs):
         for fun in self.funcs:
-            fun()
+            fun(*args, **kwargs)
 
 frame_changed = _Event()
+location_changed = _Event()

@@ -25,10 +25,15 @@ breakpoints have been set.""",
 
     13598: """Your gdb doesn't have a "before prompt" event.
 This means that various windows won't be able to react to
-commands like "up" or "down"."""
+commands like "up" or "down".""",
+
+    18385: """Your gdb doesn't expose locations on a gdb.Breakpoint.
+This can be worked around, but maybe not always reliably.
+This means that sometimes breakpoints won't display in source windows."""
 }
 
-_warning = "See https://sourceware.org/bugzilla/show_bug.cgi?id=%s for more information."
+_warning = """See https://sourceware.org/bugzilla/show_bug.cgi?id=%s
+for more information."""
 
 _first_report = True
 
