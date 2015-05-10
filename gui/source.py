@@ -48,8 +48,9 @@ class BufferManager:
         while True:
             line = iter.get_line() + 1
             if line in line_set:
-                all_marks[line] = buffer.create_source_mark(None, 'executable',
-                                                            iter)
+                buffer.all_marks[line] = buffer.create_source_mark(None,
+                                                                   'executable',
+                                                                   iter)
             if not iter.forward_line():
                 break
 
