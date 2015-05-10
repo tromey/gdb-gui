@@ -122,7 +122,10 @@ def get_current_location():
         frame = gdb.selected_frame()
         sal = frame.find_sal()
         symtab = sal.symtab
-        filename = symtab.fullname()
+        if symtab is not None:
+            filename = symtab.fullname()
+        else:
+            filename = None
         lineno = sal.line
     except gdb.error:
         # FIXME: should use the static location as set by list etc.
