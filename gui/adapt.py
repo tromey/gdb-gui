@@ -19,6 +19,10 @@ import gdb
 import gui.params
 
 bugs = {
+    13351: """Your gdb can't look up a symbol when the inferior is not running.
+This means that you can only view global symbols until you've started
+the inferior.""",
+
     15620: """Your gdb doesn't have a "new breakpoint" event.
 This means that the source windows will not show you where
 breakpoints have been set.""",

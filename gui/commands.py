@@ -21,6 +21,8 @@ import gui.toplevel
 import gui.dprintf
 import gui.events
 import gui.display
+import gui.gdbutil
+import gui.adapt
 import re
 from gui.startup import in_gtk_thread
 
@@ -44,6 +46,13 @@ windows can be created."""
         gui.source.lru_handler.new_source_window()
 
 class GuiListCommand(gdb.Command):
+    """List some source code in a source window.
+Usage: gui list LINESPEC
+This command uses LINESPEC to show some source code in a source
+window.  If a source window is already available, the source is
+displayed there.  Otherwise, a new source window is made.
+LINESPEC is a line specification of the form given to 'break'."""
+
     def __init__(self):
         super(GuiListCommand, self).__init__('gui list',
                                              gdb.COMMAND_SUPPORT)
@@ -65,21 +74,31 @@ class GuiListCommand(gdb.Command):
                                                sal.line)
 
 class GuiShowCommand(gdb.Command):
+    """Show the source for a symbol in a source window.
+Usage: gui show SYMBOL
+This command looks for the definition of SYMBOL in the program and
+shows its source location in a source window.  If a source window is
+already available, the source is displayed there.  Otherwise, a new
+source window is made."""
+
     def __init__(self):
         super(GuiShowCommand, self).__init__('gui show',
                                              gdb.COMMAND_SUPPORT)
 
     def invoke(self, arg, from_tty):
         self.dont_repeat()
-        # Unfortunately gdb.lookup_symbol can't be used
-        # when the inferior isn't running.
-        # There's a bug for this.
-        # FIXME - this isn't really working at all anyway.
-        symbol = gdb.lookup_global_symbol(arg)
+        try:
+            (symbol, ignore) = gdb.lookup_symbol(arg)
+        except gdb.error as e:
+            if gui.gdbutil.is_running():
+                raise
+            gui.adapt.notify_bug(13351)
+            symbol = gdb.lookup_global_symbol(arg)
         if symbol is None:
-            raise gdb.GdbError('not found')
+            raise gdb.GdbError('symbol ' + arg + ' not found')
         if symbol.symtab is None or symbol.symtab.filename is None:
-            raise gdb.GdbError('could not find file for symbol')
+            raise gdb.GdbError('symbol ' + arg
+                               + ' does not seem to have an associated file')
         gui.source.lru_handler.show_source_gdb(None, symbol.symtab,
                                                symbol.symtab.fullname(),
                                                symbol.line)
