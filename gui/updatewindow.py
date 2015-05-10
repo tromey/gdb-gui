@@ -49,9 +49,6 @@ class UpdateWindow(Toplevel):
 
     @in_gdb_thread
     def _connect_events(self):
-        # FIXME - we need an event for "selected frame changed".
-        # ... and thread-changed
-        # really just pre-prompt would be good enough
         gdb.events.stop.connect(self._on_event)
         gui.events.frame_changed.connect(self._on_event)
 
