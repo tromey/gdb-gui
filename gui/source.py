@@ -148,6 +148,25 @@ def get_current_location():
 class LRUHandler:
     def __init__(self):
         self.windows = []
+        self.work_location = None
+
+    # What a lame name.
+    @in_gdb_thread
+    def show_source_gdb(self, frame, symtab, srcfile, srcline):
+        if len(self.windows) == 0:
+            self.work_location = (frame, symtab, srcfile, srcline)
+            SourceWindow()
+        gui.startup.send_to_gtk(lambda: self.show_source(frame,
+                                                         symtab,
+                                                         srcfile,
+                                                         srcline))
+
+    @in_gdb_thread
+    def new_source_window(self):
+        loc = get_current_location()
+        if loc[2] is not None:
+            self.work_location = loc
+            SourceWindow()
 
     @in_gdb_thread
     def on_event(self, *args):
@@ -207,7 +226,13 @@ class LRUHandler:
         if len(self.windows) == 1:
             gdb.post_event(self._connect_events)
         # Show something.
-        gdb.post_event(lambda: self.on_event(None))
+        if self.work_location is not None:
+            (frame, symtab, filename, lineno) = self.work_location
+            self.work_location = None
+            gui.startup.send_to_gtk(lambda: self.show_source(frame,
+                                                             symtab,
+                                                             filename,
+                                                             lineno))
 
 lru_handler = LRUHandler()
 

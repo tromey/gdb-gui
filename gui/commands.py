@@ -41,7 +41,48 @@ windows can be created."""
 
     def invoke(self, arg, from_tty):
         self.dont_repeat()
-        gui.source.SourceWindow()
+        gui.source.lru_handler.new_source_window()
+
+class GuiListCommand(gdb.Command):
+    def __init__(self):
+        super(GuiListCommand, self).__init__('gui list',
+                                             gdb.COMMAND_SUPPORT)
+
+    def invoke(self, arg, from_tty):
+        self.dont_repeat()
+        (extra, sals) = gdb.decode_line(arg)
+        if extra is not None:
+            raise gdb.GdbError('unrecognized junk at end of command: ' + extra)
+        if sals is None:
+            raise gdb.GdbError('not found')
+        if len(sals) > 1:
+            print "Ambiguous linespec, only showing first result"
+        sal = sals[0]
+        if sal.symtab is None or sal.symtab.filename is None:
+            raise gdb.GdbError('could not find file for symbol')
+        gui.source.lru_handler.show_source_gdb(None, sal.symtab,
+                                               sal.symtab.fullname(),
+                                               sal.line)
+
+class GuiShowCommand(gdb.Command):
+    def __init__(self):
+        super(GuiShowCommand, self).__init__('gui show',
+                                             gdb.COMMAND_SUPPORT)
+
+    def invoke(self, arg, from_tty):
+        self.dont_repeat()
+        # Unfortunately gdb.lookup_symbol can't be used
+        # when the inferior isn't running.
+        # There's a bug for this.
+        # FIXME - this isn't really working at all anyway.
+        symbol = gdb.lookup_global_symbol(arg)
+        if symbol is None:
+            raise gdb.GdbError('not found')
+        if symbol.symtab is None or symbol.symtab.filename is None:
+            raise gdb.GdbError('could not find file for symbol')
+        gui.source.lru_handler.show_source_gdb(None, symbol.symtab,
+                                               symbol.symtab.fullname(),
+                                               symbol.line)
 
 class GuiLogWindowCommand(gdb.Command):
     """Create a new log window.
@@ -211,6 +252,8 @@ GuiOutputCommand()
 GuiPrintfCommand()
 GuiDprintfCommand()
 GuiDisplayCommand()
+GuiListCommand()
+GuiShowCommand()
 InfoWindowsCommand()
 DeleteWindowsCommand()
 
