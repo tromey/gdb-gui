@@ -274,8 +274,7 @@ class SourceWindow(gui.updatewindow.UpdateWindow):
         self.view.set_tab_width(gui.params.tab_width.value)
 
         attrs = GtkSource.MarkAttributes()
-        # FIXME: really we want a little green dot...
-        attrs.set_pixbuf(self._get_pixmap('icons/countpoint-marker.png'))
+        attrs.set_pixbuf(self._get_pixmap('icons/ok.png'))
         self.view.set_mark_attributes('executable', attrs, 0)
 
         attrs = GtkSource.MarkAttributes()
