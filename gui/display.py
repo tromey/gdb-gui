@@ -56,9 +56,6 @@ class DisplayWindow(gui.updatewindow.UpdateWindow):
         if self.diff:
             self.tag = self.buffer.create_tag('new', foreground = 'red')
 
-        self.update_title()
-        self.window.show()
-
     def _update(self, text):
         self.buffer.delete(self.buffer.get_start_iter(),
                            self.buffer.get_end_iter())

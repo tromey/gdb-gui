@@ -19,6 +19,7 @@ import gdb
 import gui.gdbutil
 import gui.params
 import gui.startup
+import gui.storage
 import threading
 
 from gi.repository import Pango
@@ -31,16 +32,33 @@ class _ToplevelState(object):
         self.toplevel_lock = threading.Lock()
         self.next_toplevel = 1
         self.toplevels = {}
+        self.byclass = {}
 
-    def add(self, obj):
+    def add(self, obj, window_type):
         with self.toplevel_lock:
             obj.number = self.next_toplevel
             self.next_toplevel = self.next_toplevel + 1
             self.toplevels[obj.number] = obj
+            # Each window also has a window number specific to its
+            # type.  Compute this here.
+            if window_type not in self.toplevels:
+                self.byclass[window_type] = []
+            found = None
+            for num in range(len(self.byclass[window_type])):
+                if self.byclass[window_type][num] is None:
+                    found = num
+                    break
+            if found is None:
+                self.byclass[window_type].append(obj)
+                found = len(self.byclass[window_type])
+            else:
+                self.byclass[found] = obj
+            obj.type_number = found
 
     def remove(self, obj):
         with self.toplevel_lock:
             del self.toplevels[obj.number]
+            self.byclass[obj.type_number] = None
 
     def get(self, winno):
         window = None
@@ -111,10 +129,38 @@ state = _ToplevelState()
 
 class Toplevel(object):
     def __init__(self, window_type):
-        state.add(self)
+        state.add(self, window_type)
         # The subclass must set this.
         self.window = None
         self.window_type = window_type
+        self.storage_name = window_type + '-' + str(self.type_number) + '-geom'
+        gui.startup.send_to_gtk(self._do_gtk_initialize)
+
+    @in_gtk_thread
+    def gtk_initialize(self):
+        """Subclasses should implement this method to do initialization
+        in the Gtk thread."""
+        pass
+
+    @in_gtk_thread
+    def _do_gtk_initialize(self):
+        self.gtk_initialize()
+        self.window.connect('configure-event', self._on_resize)
+        geom = gui.storage.storage_manager.get(self.storage_name)
+        if geom:
+            self.window.parse_geometry(geom)
+        self.update_title()
+        self.window.show()
+
+    @in_gdb_thread
+    def _save_size(self, geom):
+        gui.storage.storage_manager.set(self.storage_name, geom)
+
+    @in_gtk_thread
+    def _on_resize(self, widget, event):
+        geom = '%dx%d+%d+%d' % (event.width, event.height, event.x, event.y)
+        gdb.post_event(lambda: self._save_size(geom))
+        return False
 
     def destroy(self):
         state.remove(self)

@@ -27,16 +27,16 @@ default_log_window = None
 
 class LogWindow(gui.toplevel.Toplevel):
     def __init__(self):
-        super(LogWindow, self).__init__('log')
         global default_log_window
         if default_log_window is not None:
             default_log_window.default = ''
         default_log_window = self
         # For the window title.
         self.default = ' [Default]'
-        gui.startup.send_to_gtk(self._initialize)
+        super(LogWindow, self).__init__('log')
 
-    def _initialize(self):
+    @in_gtk_thread
+    def gtk_initialize(self):
         builder = gui.startup.create_builder('logwindow.xml')
         builder.connect_signals(self)
 
@@ -44,9 +44,6 @@ class LogWindow(gui.toplevel.Toplevel):
         self.view = builder.get_object('textview')
         self.view.modify_font(gui.params.font_manager.get_font())
         self.buffer = builder.get_object('buffer')
-
-        self.update_title()
-        self.window.show()
 
     @in_gtk_thread
     def set_font(self, font):

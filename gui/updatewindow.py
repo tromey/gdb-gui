@@ -29,16 +29,9 @@ class UpdateWindow(Toplevel):
 
     def __init__(self, window_type):
         super(UpdateWindow, self).__init__(window_type)
-        gui.startup.send_to_gtk(self.gtk_initialize)
         self._connect_events()
         # Display the data now.
         self.on_event()
-
-    @in_gtk_thread
-    def gtk_initialize(self):
-        """Subclasses should implement this method to do initialization
-        in the Gtk thread."""
-        pass
 
     # FIXME: really ought to be passing in an event here.
     @in_gdb_thread

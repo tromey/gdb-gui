@@ -66,7 +66,8 @@ class BufferManager:
             self.lang_manager = GtkSource.LanguageManager.get_default()
 
         buff = GtkSource.Buffer()
-        buff.set_language(self.lang_manager.guess_language(filename))
+        if filename:
+            buff.set_language(self.lang_manager.guess_language(filename))
         buff.set_style_scheme(gui.params.source_theme.get_scheme())
         buff.begin_not_undoable_action()
         try:
@@ -161,10 +162,8 @@ class LRUHandler:
 
     @in_gdb_thread
     def new_source_window(self):
-        loc = get_current_location()
-        if loc[2] is not None:
-            self.work_location = loc
-            SourceWindow()
+        self.work_location = get_current_location()
+        SourceWindow()
 
     @in_gdb_thread
     def on_event(self, *args):
@@ -282,9 +281,6 @@ class SourceWindow(gui.updatewindow.UpdateWindow):
         self.view.set_mark_attributes('breakpoint', attrs, 1)
 
         lru_handler.add(self)
-
-        self.update_title()
-        self.window.show()
 
     @in_gtk_thread
     def _update_buttons(self, running):
