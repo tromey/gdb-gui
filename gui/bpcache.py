@@ -20,7 +20,7 @@ import gui.adapt
 # This maps from (FILENAME,LINE) to a set of breakpoints referencing
 # that file/line.  Then we emit events when entries are created or
 # destroyed.
-breakpoint_source_map = {}
+_breakpoint_source_map = {}
 
 def _breakpoint_created(bp):
     if bp.location is None:
@@ -34,20 +34,20 @@ def _breakpoint_created(bp):
         if sal.symtab is None:
             continue
         entry = (sal.symtab.fullname(), sal.line)
-        if entry not in breakpoint_source_map:
-            breakpoint_source_map[entry] = set()
-        if bp.number not in breakpoint_source_map[entry]:
-            breakpoint_source_map[entry].add(bp.number)
+        if entry not in _breakpoint_source_map:
+            _breakpoint_source_map[entry] = set()
+        if bp.number not in _breakpoint_source_map[entry]:
+            _breakpoint_source_map[entry].add(bp.number)
             gui.events.location_changed.post(entry, True)
         else:
-            breakpoint_source_map[entry].add(bp.number)
+            _breakpoint_source_map[entry].add(bp.number)
 
 def _breakpoint_deleted(bp):
     num = bp.number
-    for entry in breakpoint_source_map:
-        if num in breakpoint_source_map[entry]:
-            breakpoint_source_map[entry].discard(bp.number)
-            if len(breakpoint_source_map[entry]) == 0:
+    for entry in _breakpoint_source_map:
+        if num in _breakpoint_source_map[entry]:
+            _breakpoint_source_map[entry].discard(bp.number)
+            if len(_breakpoint_source_map[entry]) == 0:
                 gui.events.location_changed.post(entry, False)
 
 if not hasattr(gdb.events, 'breakpoint_created'):
