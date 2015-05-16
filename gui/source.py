@@ -313,8 +313,12 @@ class SourceWindow(gui.updatewindow.UpdateWindow):
             return
         if event.button.get_button()[1] != 1:
             return
-        fun = Invoker("break %s:%d" % (self.view.get_buffer().filename,
-                                       textiter.get_line() + 1))
+        filename = self.view.get_buffer().filename
+        line = textiter.get_line() + 1
+        if gui.bpcache.any_breakpoint_at(filename, line):
+            fun = Invoker("clear %s:%d" % (filename,line))
+        else:
+            fun = Invoker("break %s:%d" % (filename, line))
         fun()
 
     def _do_scroll(self, buff, srcline):
