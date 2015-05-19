@@ -18,7 +18,12 @@
 from gi.repository import GLib
 import os
 import errno
-import ConfigParser
+try:
+    import configparser
+except ImportError:
+    # Python 2.
+    import ConfigParser
+    configparser = ConfigParser
 import atexit
 
 class StorageManager:
@@ -26,11 +31,11 @@ class StorageManager:
         self.dir = os.path.join(GLib.get_user_config_dir(), 'gdb')
         self.file = os.path.join(self.dir, 'settings')
         try:
-            os.mkdir(self.dir, 0700)
+            os.mkdir(self.dir, 0o700)
         except OSError as exc:
             if exc.errno is not errno.EEXIST:
                 self.file = None
-        self.config = ConfigParser.RawConfigParser()
+        self.config = configparser.RawConfigParser()
         if self.file is not None:
             self.config.read(self.file)
         if not self.config.has_section('general'):
@@ -56,7 +61,7 @@ class StorageManager:
         self.config.set('general', name, value)
 
     def write(self):
-        with open(self.file, 'wb') as save_file:
+        with open(self.file, 'wt') as save_file:
             self.config.write(save_file)
 
 storage_manager = StorageManager()

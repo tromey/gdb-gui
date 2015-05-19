@@ -65,7 +65,7 @@ LINESPEC is a line specification of the form given to 'break'."""
         if sals is None:
             raise gdb.GdbError('not found')
         if len(sals) > 1:
-            print "Ambiguous linespec, only showing first result"
+            print("Ambiguous linespec, only showing first result")
         sal = sals[0]
         if sal.symtab is None or sal.symtab.filename is None:
             raise gdb.GdbError('could not find file for symbol')
@@ -122,7 +122,7 @@ gui print @5 variable"""
     def invoke(self, arg, from_tty):
         self.dont_repeat()
         window = gui.logwindow.LogWindow()
-        print "Created log window %d; now the default" % window.number
+        print("Created log window %d; now the default" % window.number)
 
 class GuiPrintBase(gdb.Command):
     def __init__(self, command):

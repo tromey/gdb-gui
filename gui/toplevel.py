@@ -70,15 +70,15 @@ class _ToplevelState(object):
     def display(self):
         with self.toplevel_lock:
             if len(self.toplevels) == 0:
-                print "No windows"
+                print("No windows")
                 return
 
-            print ' Num    Name'
+            print(' Num    Name')
             for winno in range(1, self.next_toplevel):
                 if winno in self.toplevels:
                     window = self.toplevels[winno]
-                    print ' %3d    %s' % (window.number,
-                                          window.window.get_title())
+                    print(' %3d    %s' % (window.number,
+                                          window.window.get_title()))
 
     @in_gtk_thread
     def _do_set_font(self, font_name):
@@ -123,7 +123,7 @@ class _ToplevelState(object):
 
     @in_gtk_thread
     def windows(self):
-        return self.toplevels.values()
+        return list(self.toplevels.values())
 
 state = _ToplevelState()
 

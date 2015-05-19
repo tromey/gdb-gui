@@ -70,7 +70,7 @@ class _StoredParameter(gdb.Parameter):
         elif p_kind is gdb.PARAM_ZINTEGER:
             val = storage.getint(self.storage_name)
         else:
-            raise "WHOOPS"
+            raise Error("missing case in gdb gui code")
         # Don't record the first setting.
         self.storage = None
         if val is None:

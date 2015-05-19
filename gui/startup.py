@@ -15,23 +15,30 @@
 
 import gdb
 import threading
-import Queue
+try:
+    import queue
+except ImportError:
+    # Python 2.
+    import Queue
+    queue = Queue
 import os
 import os.path
 import gui
 
-import fix_signals
+from . import fix_signals
 fix_signals.save()
 
 from gi.repository import Gtk, Gdk, GObject, GtkSource, GLib, GdkPixbuf
 
 (read_pipe, write_pipe) = os.pipe()
 
-_event_queue = Queue.Queue()
+_event_queue = queue.Queue()
 
 def send_to_gtk(func):
     _event_queue.put(func)
-    os.write(write_pipe, 'x')
+    # The payload is arbitrary, and bytes(1) is chosen to work on both
+    # Python 2 and Python 3.
+    os.write(write_pipe, bytes(1))
 
 class _GtkThread(threading.Thread):
     def handle_queue(self, source, condition):

@@ -1,4 +1,4 @@
-/* Copyright (C) 2013 Tom Tromey <tom@tromey.com>
+/* Copyright (C) 2013, 2015 Tom Tromey <tom@tromey.com>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -53,8 +53,33 @@ static PyMethodDef methods[] =
   { NULL, NULL, 0, NULL }
 };
 
+#if PY_MAJOR_VERSION >= 3
+
+static struct PyModuleDef module =
+{
+  PyModuleDef_HEAD_INIT,
+  "fix_signals",
+  NULL,
+  -1,
+  methods,
+  NULL,
+  NULL,
+  NULL,
+  NULL
+};
+
+PyMODINIT_FUNC
+PyInit_fix_signals (void)
+{
+  PyModule_Create (&module);
+}
+
+#else
+
 PyMODINIT_FUNC
 initfix_signals (void)
 {
   Py_InitModule ("fix_signals", methods);
 }
+
+#endif

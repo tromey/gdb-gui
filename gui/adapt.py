@@ -46,10 +46,10 @@ def notify_bug(bugno):
         return
     if not (bugno in bugs):
         return
-    print "################"
-    print bugs[bugno]
-    print _warning % bugno
-    print ""
-    print "You can use 'set gui mention-missing off' to disable this message."
-    print "################"
+    print("################")
+    print(bugs[bugno])
+    print(_warning % bugno)
+    print("")
+    print("You can use 'set gui mention-missing off' to disable this message.")
+    print("################")
     del bugs[bugno]
