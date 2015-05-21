@@ -36,6 +36,9 @@ class BufferManager:
         self.lang_manager = None
         gui.params.source_theme.set_buffer_manager(self)
         gui.events.location_changed.connect(self._location_changed)
+        # FIXME - emit a warning if this isn't available.
+        if hasattr(gdb.events, 'clear_objfiles'):
+            gdb.events.clear_objfiles.connect(self._clear_objfiles)
 
     def release_buffer(self, buff):
         # FIXME: we should be smart about buffer caching.
@@ -113,6 +116,16 @@ class BufferManager:
         gui.startup.send_to_gtk(lambda: self.update_breakpoint_location(loc,
                                                                         is_set))
 
+    @in_gtk_thread
+    def _gtk_clear_objfiles(self):
+        for window in gui.toplevel.state.windows():
+            window.clear_source()
+        self.buffers = {}
+
+    @in_gdb_thread
+    def _clear_objfiles(self, ignore):
+        gui.startup.send_to_gtk(self._gtk_clear_objfiles)
+
 buffer_manager = BufferManager()
 
 # Return (FRAME, SYMTAB, FILE, LINE) for the selected frame, or, if
@@ -178,6 +191,8 @@ class LRUHandler:
     def _connect_events(self):
         gdb.events.stop.connect(self.on_event)
         gui.events.frame_changed.connect(self.on_event)
+        if hasattr(gdb.events, 'new_objfile'):
+            gdb.events.new_objfile.connect(self._new_objfile)
 
     @in_gdb_thread
     def _disconnect_events(self):
@@ -230,6 +245,11 @@ class LRUHandler:
                                                              symtab,
                                                              filename,
                                                              lineno))
+
+    @in_gdb_thread
+    def _new_objfile(self, event):
+        if len(gdb.objfiles()) == 1:
+            self.on_event()
 
 lru_handler = LRUHandler()
 
@@ -349,3 +369,9 @@ class SourceWindow(gui.updatewindow.UpdateWindow):
     @in_gtk_thread
     def set_tab_width(self, width):
         self.view.set_tab_width(width)
+
+    @in_gtk_thread
+    def clear_source(self):
+        old_buffer = self.view.get_buffer()
+        self.view.set_buffer(None)
+        buffer_manager.release_buffer(old_buffer)

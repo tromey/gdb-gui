@@ -189,3 +189,7 @@ class Toplevel(object):
     @in_gtk_thread
     def set_tab_width(self, width):
         pass
+
+    @in_gtk_thread
+    def clear_source(self):
+        pass
