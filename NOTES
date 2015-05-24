@@ -35,12 +35,6 @@ A few notes on gdb improvements that would help the GUI:
 Windows
 
 assembly view (?)
-breakpoint
 signal handling?
-data display
-  special registers display?
-stack
-inferiors/threads
-  could expand into stack?
 list of files in the program
 redirect gdb stdlog to a window
