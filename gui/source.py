@@ -39,10 +39,19 @@ class BufferManager:
         # FIXME - emit a warning if this isn't available.
         if hasattr(gdb.events, 'clear_objfiles'):
             gdb.events.clear_objfiles.connect(self._clear_objfiles)
+        self.empty_buffer = None
 
     def release_buffer(self, buff):
         # FIXME: we should be smart about buffer caching.
+        # Note that BUFF can be the empty buffer.
         pass
+
+    @in_gtk_thread
+    def get_empty_buffer(self):
+        if self.empty_buffer is None:
+            self.empty_buffer = GtkSource.Buffer()
+            self.empty_buffer.set_style_scheme(gui.params.source_theme.get_scheme())
+        return self.empty_buffer
 
     @in_gtk_thread
     def _set_marks(self, buffer, line_set):
@@ -93,6 +102,8 @@ class BufferManager:
         new_scheme = gui.params.source_theme.get_scheme()
         for filename in self.buffers:
             self.buffers[filename].set_style_scheme(new_scheme)
+        if self.empty_buffer is not None:
+            self.empty_buffer.set_style_scheme(new_scheme)
 
     @in_gdb_thread
     def change_theme(self):
@@ -118,8 +129,9 @@ class BufferManager:
 
     @in_gtk_thread
     def _gtk_clear_objfiles(self):
+        empty_buffer = self.get_empty_buffer()
         for window in gui.toplevel.state.windows():
-            window.clear_source()
+            window.clear_source(empty_buffer)
         self.buffers = {}
 
     @in_gdb_thread
@@ -299,6 +311,7 @@ class SourceWindow(gui.updatewindow.UpdateWindow):
         attrs = GtkSource.MarkAttributes()
         attrs.set_pixbuf(self._get_pixmap('icons/breakpoint-marker.png'))
         self.view.set_mark_attributes('breakpoint', attrs, 1)
+        self.view.set_buffer(buffer_manager.get_empty_buffer())
 
         lru_handler.add(self)
 
@@ -371,7 +384,7 @@ class SourceWindow(gui.updatewindow.UpdateWindow):
         self.view.set_tab_width(width)
 
     @in_gtk_thread
-    def clear_source(self):
+    def clear_source(self, buffer):
         old_buffer = self.view.get_buffer()
-        self.view.set_buffer(None)
+        self.view.set_buffer(buffer)
         buffer_manager.release_buffer(old_buffer)
