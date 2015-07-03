@@ -16,6 +16,7 @@
 import gdb
 import gui.startup
 import gui.source
+import gui.stack
 import gui.logwindow
 import gui.toplevel
 import gui.dprintf
@@ -44,6 +45,24 @@ windows can be created."""
     def invoke(self, arg, from_tty):
         self.dont_repeat()
         gui.source.lru_handler.new_source_window()
+
+class GuiStackCommand(gdb.Command):
+    """Create a new stack window.
+Usage: gui stack
+This creates a stack window in the GUI if it does not already exist."""
+
+    def __init__(self):
+        super(GuiStackCommand, self).__init__('gui stack',
+                                              gdb.COMMAND_SUPPORT)
+
+    def invoke(self, arg, from_tty):
+        self.dont_repeat()
+        # FIXME does it make sense to have more than one?  Maybe if
+        # we have thread-locking.
+        # FIXME could have arguments to set various stack flags,
+        # like whether to show child frames, or just show raw,
+        # or maybe even whatever 'bt' takes?
+        gui.stack.show_stack()
 
 class GuiListCommand(gdb.Command):
     """List some source code in a source window.
@@ -265,6 +284,7 @@ found using "info windows"."""
 
 GuiCommand()
 GuiSourceCommand()
+GuiStackCommand()
 GuiLogWindowCommand()
 GuiPrintCommand()
 GuiOutputCommand()

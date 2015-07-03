@@ -272,6 +272,7 @@ font_manager = _Font()
 _Title('source', '\\W{basename} [GDB Source @\\W{number}]')
 _Title('display', '\\W{command} [GDB Display @\\W{number}]')
 _Title('log', '[GDB Log @\\W{number}]\\W{default}')
+_Title('stack', '[GDB Stack @\\W{number}]')
 
 warn_missing = _Missing()
 line_numbers = _Lines()
