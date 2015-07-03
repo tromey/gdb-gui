@@ -19,6 +19,7 @@ import gdb
 import gui
 import gui.updatewindow
 from gui.invoker import Invoker
+from gui.framecache import FrameCommandInvoker
 import gui.startup
 from gui.startup import in_gdb_thread, in_gtk_thread
 import gui.toplevel
@@ -287,8 +288,8 @@ class SourceWindow(gui.updatewindow.UpdateWindow):
         self.do_continue = Invoker("continue")
         self.do_finish = Invoker("finish")
         self.do_stop = Invoker("interrupt")
-        self.do_up = Invoker("up")
-        self.do_down = Invoker("down")
+        self.do_up = FrameCommandInvoker("up")
+        self.do_down = FrameCommandInvoker("down")
 
         builder = gui.startup.create_builder('sourcewindow.xml')
         builder.connect_signals(self)

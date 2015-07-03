@@ -16,6 +16,9 @@
 import gdb
 import gui.events
 import gui.adapt
+import gui.invoker
+
+from gui.startup import in_gdb_thread
 
 _last_selected_frame = None
 
@@ -29,6 +32,14 @@ def check_frame():
     if _last_selected_frame is not sel:
         _last_selected_frame = sel
         gui.events.frame_changed.post()
+
+# We need this because we rely on the before_prompt hook to notify us
+# of frame changes.  A dedicated frame change hook would be better.
+class FrameCommandInvoker(gui.invoker.Invoker):
+    @in_gdb_thread
+    def do_call(self):
+        gui.invoker.Invoker.do_call(self)
+        check_frame()
 
 # See my gdb branch on github.
 if hasattr(gdb.events, 'before_prompt'):

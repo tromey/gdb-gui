@@ -24,7 +24,7 @@ import gui.startup
 import gui.markup
 import gui.params
 
-from gui.invoker import Invoker
+from gui.framecache import FrameCommandInvoker
 from gui.startup import in_gdb_thread, in_gtk_thread
 from gi.repository import Gtk
 
@@ -52,8 +52,8 @@ class StackWindow(gui.updatewindow.UpdateWindow):
 
     @in_gtk_thread
     def gtk_initialize(self):
-        self.do_up = Invoker("up")
-        self.do_down = Invoker("down")
+        self.do_up = FrameCommandInvoker("up")
+        self.do_down = FrameCommandInvoker("down")
         builder = gui.startup.create_builder('stackwindow.xml')
         builder.connect_signals(self)
 
