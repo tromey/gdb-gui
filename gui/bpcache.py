@@ -26,7 +26,10 @@ def _breakpoint_created(bp):
     if bp.location is None:
         return
     gui.adapt.notify_bug(18385)
-    (rest, locs) = gdb.decode_line(bp.location)
+    try:
+        (rest, locs) = gdb.decode_line(bp.location)
+    except:
+        return
     if rest is not None:
         # Let's assume we couldn't reparse for some reason.
         return
@@ -61,3 +64,9 @@ if not hasattr(gdb.events, 'breakpoint_created'):
 else:
     gdb.events.breakpoint_created.connect(_breakpoint_created)
     gdb.events.breakpoint_deleted.connect(_breakpoint_deleted)
+
+if not hasattr(gdb.events, 'breakpoint_modified'):
+    gui.adapt.notify_bug(18620)
+else:
+    # It's fine to just reuse the "created" handler here.
+    gdb.events.breakpoint_modified.connect(_breakpoint_created)
