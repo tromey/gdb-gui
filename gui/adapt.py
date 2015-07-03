@@ -33,7 +33,11 @@ commands like "up" or "down".""",
 
     18385: """Your gdb doesn't expose locations on a gdb.Breakpoint.
 This can be worked around, but maybe not always reliably.
-This means that sometimes breakpoints won't display in source windows."""
+This means that sometimes breakpoints won't display in source windows.""",
+
+    18620: """Your gdb doesn't have a "breakpoint modified" event.
+This means that when a pending breakpoint is resolved, the GUI won't
+be able to update to reflect that fact."""
 }
 
 _warning = """See https://sourceware.org/bugzilla/show_bug.cgi?id=%s
