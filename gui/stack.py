@@ -66,7 +66,10 @@ class StackWindow(gui.updatewindow.UpdateWindow):
     @in_gtk_thread
     def _update(self, data):
         self.text.delete(self.text.get_start_iter(), self.text.get_end_iter())
+        frame_no = 1
         for frame in data:
+            self.text.insert_at_cursor('#%d ' % frame_no)
+            frame_no = frame_no + 1
             # Goofball API.
             if isinstance(frame["name"], str):
                 self.text.insert_at_cursor(frame["name"])
