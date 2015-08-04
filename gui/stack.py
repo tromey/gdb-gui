@@ -21,7 +21,6 @@ import gdb.FrameDecorator
 import gdb.FrameIterator
 import gui.updatewindow
 import gui.startup
-import gui.markup
 import gui.params
 
 from gui.framecache import FrameCommandInvoker
