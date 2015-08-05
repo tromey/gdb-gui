@@ -88,13 +88,17 @@ class StackWindow(gui.updatewindow.UpdateWindow):
     @in_gdb_thread
     def on_event(self):
         frame_iter = None
-        start_frame = gdb.newest_frame()
-        if not self.raw:
-            frame_iter = gdb.frames.execute_frame_filters(start_frame, 0, -1)
-        if frame_iter is None:
-            frame_iter = map(gdb.FrameDecorator.FrameDecorator,
-                             gdb.FrameIterator.FrameIterator(start_frame))
-        data = list(map(format_frame, frame_iter))
+        try:
+            start_frame = gdb.newest_frame()
+            if not self.raw:
+                frame_iter = gdb.frames.execute_frame_filters(start_frame,
+                                                              0, -1)
+                if frame_iter is None:
+                    frame_iter = map(gdb.FrameDecorator.FrameDecorator,
+                                     gdb.FrameIterator.FrameIterator(start_frame))
+            data = list(map(format_frame, frame_iter))
+        except gdb.error:
+            data = []
         gui.startup.send_to_gtk(lambda: self._update(data))
 
     @in_gtk_thread

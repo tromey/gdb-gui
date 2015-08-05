@@ -191,5 +191,5 @@ class Toplevel(object):
         pass
 
     @in_gtk_thread
-    def clear_source(self):
+    def clear_source(self, buffer):
         pass
