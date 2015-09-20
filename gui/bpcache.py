@@ -53,6 +53,12 @@ def _breakpoint_deleted(bp):
             if len(_breakpoint_source_map[entry]) == 0:
                 gui.events.location_changed.post(entry, False)
 
+def _breakpoint_modified(bp):
+    if bp.enabled:
+        _breakpoint_created(bp)
+    else:
+        _breakpoint_deleted(bp)
+
 def any_breakpoint_at(filename, lineno):
     entry = (filename, lineno)
     if entry not in _breakpoint_source_map:
@@ -68,5 +74,4 @@ else:
 if not hasattr(gdb.events, 'breakpoint_modified'):
     gui.adapt.notify_bug(18620)
 else:
-    # It's fine to just reuse the "created" handler here.
-    gdb.events.breakpoint_modified.connect(_breakpoint_created)
+    gdb.events.breakpoint_modified.connect(_breakpoint_modified)
