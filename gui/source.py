@@ -139,6 +139,15 @@ class BufferManager:
     def _clear_objfiles(self, ignore):
         gui.startup.send_to_gtk(self._gtk_clear_objfiles)
 
+    @in_gtk_thread
+    def clear_last_pointer(self):
+        for key in self.buffers:
+            buff = self.buffers[key]
+            # This could probably be more efficient.
+            buff.remove_source_marks(buff.get_start_iter(),
+                                     buff.get_end_iter(),
+                                     'pointer')
+
 buffer_manager = BufferManager()
 
 # Return (FRAME, SYMTAB, FILE, LINE) for the selected frame, or, if
@@ -312,8 +321,12 @@ class SourceWindow(gui.updatewindow.UpdateWindow):
         attrs = GtkSource.MarkAttributes()
         attrs.set_pixbuf(self._get_pixmap('icons/breakpoint-marker.png'))
         self.view.set_mark_attributes('breakpoint', attrs, 1)
-        self.view.set_buffer(buffer_manager.get_empty_buffer())
 
+        attrs = GtkSource.MarkAttributes()
+        attrs.set_pixbuf(self._get_pixmap('icons/line-pointer.png'))
+        self.view.set_mark_attributes('pointer', attrs, 2)
+
+        self.view.set_buffer(buffer_manager.get_empty_buffer())
         lru_handler.add(self)
 
     @in_gtk_thread
@@ -356,7 +369,9 @@ class SourceWindow(gui.updatewindow.UpdateWindow):
         fun()
 
     def _do_scroll(self, buff, srcline):
-        buff.place_cursor(buff.get_iter_at_line(srcline))
+        iter = buff.get_iter_at_line(srcline)
+        buff.create_source_mark(None, 'pointer', iter)
+        buff.place_cursor(iter)
         self.view.scroll_mark_onscreen(buff.get_insert())
         return False
 
@@ -369,6 +384,7 @@ class SourceWindow(gui.updatewindow.UpdateWindow):
             self.basename = os.path.basename(srcfile)
             self.update_title()
             buffer_manager.release_buffer(old_buffer)
+            buffer_manager.clear_last_pointer()
             GObject.idle_add(self._do_scroll, buff, srcline - 1)
             # self.view.scroll_to_iter(buff.get_iter_at_line(srcline), 0.0)
 
