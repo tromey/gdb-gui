@@ -261,6 +261,39 @@ class _Tabs(_StoredParameter):
         gui.toplevel.state.set_tab_width(self.value)
         return ""
 
+class _StopNotification(_StoredParameter):
+    # Silly gdb requirement.
+    ""
+
+    set_doc = "Set whether stop notifications are displayed."
+    show_doc = "Show whether stop notifications are displayed."
+
+    def __init__(self):
+        super(_StopNotification, self).__init__('%s', 'stop-notification', True,
+                                                gdb.COMMAND_RUNNING,
+                                                gdb.PARAM_BOOLEAN)
+
+    @in_gdb_thread
+    def get_show_string(self, pvalue):
+        return "Whether stop notifications are displayed is: %s" % self.value
+
+class _StopNotificationSeconds(_StoredParameter):
+    # Silly gdb requirement.
+    ""
+
+    set_doc = "Set stop notification timeout in seconds."
+    show_doc = "Show stop notification timeout."
+
+    def __init__(self):
+        super(_StopNotificationSeconds, self).__init__('%s',
+                                                       'stop-notification-seconds',
+                                                       120,
+                                                       gdb.COMMAND_RUNNING,
+                                                       gdb.PARAM_ZINTEGER)
+
+    @in_gdb_thread
+    def get_show_string(self, pvalue):
+        return "Stop notifications are displayed after %d seconds." % self.value
 
 _SetBase()
 _SetTitleBase()
@@ -268,6 +301,8 @@ _ShowBase()
 _ShowTitleBase()
 source_theme = _Theme()
 font_manager = _Font()
+stop_notification = _StopNotification()
+stop_notification_seconds = _StopNotificationSeconds()
 
 _Title('source', '\\W{basename} [GDB Source @\\W{number}]')
 _Title('display', '\\W{command} [GDB Display @\\W{number}]')

@@ -22,3 +22,6 @@ import gui.commands
 import gui.params
 import gui.toplevel
 import gui.framecache
+
+# Hooks in to gdb.
+import gui.notify
