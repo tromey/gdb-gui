@@ -28,6 +28,12 @@ import gui
 from . import fix_signals
 fix_signals.save()
 
+import gi
+
+gi.require_version('Gtk', '3.0')
+gi.require_version('GtkSource', '3.0')
+gi.require_version('Notify', '0.7')
+
 from gi.repository import Gtk, Gdk, GObject, GtkSource, GLib, GdkPixbuf
 
 (read_pipe, write_pipe) = os.pipe()
