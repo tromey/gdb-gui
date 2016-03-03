@@ -127,8 +127,8 @@
               <object class="GtkToolButton" id="down">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="tooltip_text" translatable="yes">Up one frame</property>
-                <property name="label" translatable="yes">Up</property>
+                <property name="tooltip_text" translatable="yes">Down one frame</property>
+                <property name="label" translatable="yes">Down</property>
                 <property name="use_underline">True</property>
                 <property name="icon_name">go-down</property>
                 <signal name="clicked" handler="do_down" swapped="no"/>
@@ -143,8 +143,8 @@
               <object class="GtkToolButton" id="up">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="tooltip_text" translatable="yes">Down one frame</property>
-                <property name="label" translatable="yes">Down</property>
+                <property name="tooltip_text" translatable="yes">Up one frame</property>
+                <property name="label" translatable="yes">Up</property>
                 <property name="use_underline">True</property>
                 <property name="icon_name">go-up</property>
                 <signal name="clicked" handler="do_up" swapped="no"/>
