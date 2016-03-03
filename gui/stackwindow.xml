@@ -16,14 +16,14 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkToolButton" id="up">
+              <object class="GtkToolButton" id="down">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="tooltip_text" translatable="yes">Up one frame</property>
-                <property name="label" translatable="yes">Up</property>
+                <property name="tooltip_text" translatable="yes">Down one frame</property>
+                <property name="label" translatable="yes">Down</property>
                 <property name="use_underline">True</property>
                 <property name="icon_name">go-down</property>
-                <accelerator key="u" signal="clicked"/>
+                <accelerator key="d" signal="clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -31,14 +31,14 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="down">
+              <object class="GtkToolButton" id="up">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="tooltip_text" translatable="yes">Down one frame</property>
-                <property name="label" translatable="yes">Down</property>
+                <property name="tooltip_text" translatable="yes">Up one frame</property>
+                <property name="label" translatable="yes">Up</property>
                 <property name="use_underline">True</property>
                 <property name="icon_name">go-up</property>
-                <accelerator key="d" signal="clicked"/>
+                <accelerator key="u" signal="clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
