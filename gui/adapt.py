@@ -1,4 +1,4 @@
-# Copyright (C) 2015 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2015, 2016 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,11 +18,9 @@
 import gdb
 import gui.params
 
+# The rule for adding a new entry here is that the bug must have some
+# notable user-visible effect.
 bugs = {
-    13351: """Your gdb can't look up a symbol when the inferior is not running.
-This means that you can only view global symbols until you've started
-the inferior.""",
-
     15620: """Your gdb doesn't have a "new breakpoint" event.
 This means that the source windows will not show you where
 breakpoints have been set.""",

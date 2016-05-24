@@ -1,4 +1,4 @@
-# Copyright (C) 2012, 2013, 2015 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2012, 2013, 2015, 2016 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -111,7 +111,6 @@ source window is made."""
         except gdb.error as e:
             if gui.gdbutil.is_running():
                 raise
-            gui.adapt.notify_bug(13351)
             symbol = gdb.lookup_global_symbol(arg)
         if symbol is None:
             raise gdb.GdbError('symbol ' + arg + ' not found')
