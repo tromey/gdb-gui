@@ -22,7 +22,7 @@ from gi.repository import Gtk, Pango
 import functools
 from gui.startup import in_gdb_thread, in_gtk_thread
 import gui.events
-from difflib import SequenceMatcher
+from difflib import SequenceMatcher, Differ
 
 # FIXME: TO DO:
 # * highlight the changes
@@ -65,7 +65,7 @@ class DisplayWindow(gui.updatewindow.UpdateWindow):
                 # Fall through.
             else:
                 split = text.splitlines(1)
-                d = difflib.Differ()
+                d = Differ()
                 for line in d.compare(self.last_text, split):
                     if line[0] == ' ':
                         self.buffer.insert(self.buffer.get_end_iter(),
