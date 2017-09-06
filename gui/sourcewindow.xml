@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.18.3 -->
+<!-- Generated with glade 3.20.0 -->
 <interface>
   <requires lib="gtk+" version="3.0"/>
   <requires lib="gtksourceview" version="3.0"/>
-  <object class="GtkImage" id="image2">
+  <object class="GtkImage" id="finish-image">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">icons/step-out.xpm</property>
+  </object>
+  <object class="GtkImage" id="next-image">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="pixbuf">icons/step-over.xpm</property>
   </object>
-  <object class="GtkImage" id="image3">
+  <object class="GtkImage" id="step-image">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="pixbuf">icons/step-into.xpm</property>
-  </object>
-  <object class="GtkImage" id="image4">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="pixbuf">icons/step-out.xpm</property>
   </object>
   <object class="GtkWindow" id="sourcewindow">
     <property name="can_focus">False</property>
@@ -56,7 +56,7 @@
                 <property name="tooltip_text" translatable="yes">Execute one line, stepping over function calls</property>
                 <property name="label" translatable="yes">Next</property>
                 <property name="use_underline">True</property>
-                <property name="icon_widget">image2</property>
+                <property name="icon_widget">next-image</property>
                 <signal name="clicked" handler="do_next" swapped="no"/>
                 <accelerator key="n" signal="clicked"/>
               </object>
@@ -72,7 +72,7 @@
                 <property name="tooltip_text" translatable="yes">Execute one line, stepping into function calls</property>
                 <property name="label" translatable="yes">Step</property>
                 <property name="use_underline">True</property>
-                <property name="icon_widget">image3</property>
+                <property name="icon_widget">step-image</property>
                 <signal name="clicked" handler="do_step" swapped="no"/>
                 <accelerator key="s" signal="clicked"/>
               </object>
@@ -104,7 +104,7 @@
                 <property name="tooltip_text" translatable="yes">Run until the current function returns</property>
                 <property name="label" translatable="yes">Finish</property>
                 <property name="use_underline">True</property>
-                <property name="icon_widget">image4</property>
+                <property name="icon_widget">finish-image</property>
                 <signal name="clicked" handler="do_finish" swapped="no"/>
                 <accelerator key="f" signal="clicked"/>
               </object>
@@ -132,7 +132,7 @@
                 <property name="use_underline">True</property>
                 <property name="icon_name">go-down</property>
                 <signal name="clicked" handler="do_down" swapped="no"/>
-                <accelerator key="u" signal="clicked"/>
+                <accelerator key="d" signal="clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -148,7 +148,7 @@
                 <property name="use_underline">True</property>
                 <property name="icon_name">go-up</property>
                 <signal name="clicked" handler="do_up" swapped="no"/>
-                <accelerator key="d" signal="clicked"/>
+                <accelerator key="u" signal="clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
