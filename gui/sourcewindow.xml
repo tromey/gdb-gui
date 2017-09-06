@@ -6,17 +6,37 @@
   <object class="GtkImage" id="finish-image">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">icons/step-out.xpm</property>
+    <property name="pixbuf">icons/corner-right-up.svg</property>
   </object>
   <object class="GtkImage" id="next-image">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">icons/step-over.xpm</property>
+    <property name="pixbuf">icons/arrow-right.svg</property>
   </object>
   <object class="GtkImage" id="step-image">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">icons/step-into.xpm</property>
+    <property name="pixbuf">icons/corner-right-down.svg</property>
+  </object>
+  <object class="GtkImage" id="up-image">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">icons/arrow-up.svg</property>
+  </object>
+  <object class="GtkImage" id="down-image">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">icons/arrow-down.svg</property>
+  </object>
+  <object class="GtkImage" id="pause-image">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">icons/pause.svg</property>
+  </object>
+  <object class="GtkImage" id="play-image">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">icons/fast-forward.svg</property>
   </object>
   <object class="GtkWindow" id="sourcewindow">
     <property name="can_focus">False</property>
@@ -40,7 +60,7 @@
                 <property name="tooltip_text" translatable="yes">Continue execution</property>
                 <property name="label" translatable="yes">Continue</property>
                 <property name="use_underline">True</property>
-                <property name="icon_name">media-playback-start</property>
+                <property name="icon_widget">play-image</property>
                 <signal name="clicked" handler="do_continue" swapped="no"/>
                 <accelerator key="c" signal="clicked"/>
               </object>
@@ -88,7 +108,7 @@
                 <property name="tooltip_text" translatable="yes">Interrupt the program</property>
                 <property name="label" translatable="yes">Stop</property>
                 <property name="use_underline">True</property>
-                <property name="icon_name">media-playback-pause</property>
+                <property name="icon_widget">pause-image</property>
                 <signal name="clicked" handler="do_stop" swapped="no"/>
                 <accelerator key="c" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
               </object>
@@ -130,7 +150,7 @@
                 <property name="tooltip_text" translatable="yes">Down one frame</property>
                 <property name="label" translatable="yes">Down</property>
                 <property name="use_underline">True</property>
-                <property name="icon_name">go-down</property>
+                <property name="icon_widget">down-image</property>
                 <signal name="clicked" handler="do_down" swapped="no"/>
                 <accelerator key="d" signal="clicked"/>
               </object>
@@ -146,7 +166,7 @@
                 <property name="tooltip_text" translatable="yes">Up one frame</property>
                 <property name="label" translatable="yes">Up</property>
                 <property name="use_underline">True</property>
-                <property name="icon_name">go-up</property>
+                <property name="icon_widget">up-image</property>
                 <signal name="clicked" handler="do_up" swapped="no"/>
                 <accelerator key="u" signal="clicked"/>
               </object>
