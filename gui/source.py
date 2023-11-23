@@ -1,4 +1,4 @@
-# Copyright (C) 2012, 2013, 2015 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2012, 2013, 2015, 2023 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -332,7 +332,7 @@ class SourceWindow(gui.updatewindow.UpdateWindow):
     @in_gtk_thread
     def _update_buttons(self, running):
         for button in BUTTON_NAMES:
-            if button is "stop":
+            if button == "stop":
                 self.buttons[button].set_sensitive(running)
             else:
                 self.buttons[button].set_sensitive(not running)
