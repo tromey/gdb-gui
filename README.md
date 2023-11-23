@@ -15,11 +15,12 @@ GUIs in a few ways:
 
 ## Installing
 
-To get started, install the prerequisites.  You'll need a
-Python-enabled gdb, PyGObject, and PyGktSourceView.  (And maybe more
--- if you trip across something, let me know.)  You'll need the Python
-development package to compile the small C module that is included
-here.
+To get started, install the prerequisites.  This requires GDB 14,
+because it uses a new feature there that helps with starting new
+Python threads in gdb.
+
+You'll need a Python-enabled gdb, PyGObject, and PyGktSourceView.
+(And maybe more -- if you trip across something, let me know.)
 
 On Fedora I think this suffices:
 
