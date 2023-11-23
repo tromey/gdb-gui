@@ -1,4 +1,4 @@
-# Copyright (C) 2012, 2013, 2015, 2016 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2012, 2013, 2015, 2016, 2023 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@ import gui.source
 import gui.stack
 import gui.startup
 import gui.toplevel
-from gui.startup import in_gtk_thread
 
 
 class GuiCommand(gdb.Command):
@@ -110,7 +109,7 @@ class GuiShowCommand(gdb.Command):
         self.dont_repeat()
         try:
             (symbol, ignore) = gdb.lookup_symbol(arg)
-        except gdb.error as e:
+        except gdb.error:
             if gui.gdbutil.is_running():
                 raise
             symbol = gdb.lookup_global_symbol(arg)
@@ -222,7 +221,6 @@ class GuiDprintfCommand(GuiPrintBase):
 
     def invoke(self, arg, from_tty):
         (window, arg) = self._parse_arg(arg, False)
-        orig_arg = arg
         (ignore, arg) = gdb.decode_line(arg)
         if arg is None:
             raise gdb.GdbError("no printf arguments to 'gui dprintf'")
@@ -230,8 +228,8 @@ class GuiDprintfCommand(GuiPrintBase):
         if not arg.startswith(","):
             raise gdb.GdbError("comma expected after linespec")
         arg = arg[1:]
-        spec = arg[0 : -len(arg)]
-        DPrintfBreakpoint(spec, window, arg)
+        spec = arg[0:-len(arg)]
+        gui.dprintf.DPrintfBreakpoint(spec, window, arg)
 
 
 class GuiDisplayCommand(gdb.Command):
@@ -308,6 +306,7 @@ InfoWindowsCommand()
 DeleteWindowsCommand()
 
 _can_override = False
+
 
 # A temporary test to see if you have a gdb that supports this.
 class TestCommand(gdb.Command):

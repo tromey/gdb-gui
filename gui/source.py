@@ -18,7 +18,7 @@
 import os.path
 
 import gdb
-from gi.repository import Gdk, GdkPixbuf, GObject, Gtk, GtkSource, Pango
+from gi.repository import Gdk, GdkPixbuf, GObject, GtkSource
 
 import gui
 import gui.bpcache
@@ -151,6 +151,7 @@ class BufferManager:
 
 
 buffer_manager = BufferManager()
+
 
 # Return (FRAME, SYMTAB, FILE, LINE) for the selected frame, or, if
 # there is no frame, for "main".

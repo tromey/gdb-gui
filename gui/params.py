@@ -1,4 +1,4 @@
-# Copyright (C) 2015 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2015, 2023 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ class _StoredParameter(gdb.Parameter):
         elif p_kind is gdb.PARAM_ZINTEGER:
             val = storage.getint(self.storage_name)
         else:
-            raise Error("missing case in gdb gui code")
+            raise gdb.error("missing case in gdb gui code")
         # Don't record the first setting.
         self.storage = None
         if val is None:
@@ -212,29 +212,6 @@ class _Missing(_StoredParameter):
         else:
             v = "off"
         return "Whether to warn about missing gdb features: " + v
-
-
-class _Lines(_StoredParameter):
-    # Silly gdb requirement.
-    """"""
-
-    set_doc = "Set whether to display line numbers in the source window."
-    show_doc = "Show whether to display line numbers in the source window."
-
-    def __init__(self):
-        super(_Lines, self).__init__(
-            "%s", "line-numbers", False, gdb.COMMAND_NONE, gdb.PARAM_BOOLEAN
-        )
-
-    @in_gdb_thread
-    def get_show_string(self, pvalue):
-        return "The current title format for the %s is: %s" % (self.name, self.value)
-
-    @in_gdb_thread
-    def get_set_string(self):
-        super(_Lines, self).get_set_string()
-        gui.toplevel.state.set_line_numbers(self.value)
-        return ""
 
 
 class _Lines(_StoredParameter):

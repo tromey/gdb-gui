@@ -1,4 +1,4 @@
-# Copyright (C) 2013, 2015 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2013, 2015, 2023 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,9 +16,6 @@
 # Log window.
 
 import functools
-
-import gdb
-from gi.repository import Gtk, Pango
 
 import gui.startup
 import gui.toplevel
@@ -47,12 +44,13 @@ class LogWindow(gui.toplevel.Toplevel):
         self.view.modify_font(gui.params.font_manager.get_font())
         self.buffer = builder.get_object("buffer")
 
-    @in_gtk_thread
-    def set_font(self, font):
-        self.view.modify_font(Pango.FontDescription(font_name))
+    # @in_gtk_thread
+    # def set_font(self, font):
+    #     self.view.modify_font(Pango.FontDescription(font_name))
 
     @in_gtk_thread
     def deleted(self, *args):
+        global default_log_window
         if default_log_window == self:
             default_log_window = None
             for window in gui.toplevel.state.windows():

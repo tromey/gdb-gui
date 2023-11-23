@@ -1,4 +1,4 @@
-# Copyright (C) 2013, 2015 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2013, 2015, 2023 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,11 +15,10 @@
 
 # Log window.
 
-import functools
-from difflib import Differ, SequenceMatcher
+from difflib import Differ
 
 import gdb
-from gi.repository import Gtk, Pango
+from gi.repository import Pango
 
 import gui.events
 import gui.startup
