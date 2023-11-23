@@ -20,9 +20,6 @@ import os
 import os.path
 import gui
 
-from . import fix_signals
-fix_signals.save()
-
 import gi
 
 gi.require_version('Gtk', '3.0')
@@ -40,7 +37,7 @@ def send_to_gtk(func):
     # The payload is arbitrary.
     os.write(write_pipe, bytes(1))
 
-class _GtkThread(threading.Thread):
+class _GtkThread(gdb.Thread):
     def handle_queue(self, source, condition):
         global _event_queue
         os.read(source, 1)
@@ -71,7 +68,6 @@ def start_gtk():
         _t = _GtkThread()
         _t.setDaemon(True)
         _t.start()
-        fix_signals.restore()
 
 def create_builder(filename):
     builder = Gtk.Builder()
