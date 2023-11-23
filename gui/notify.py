@@ -1,4 +1,4 @@
-# Copyright (C) 2015 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2015, 2023 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ def _on_stop(event):
 
     if (t is None
         or not gui.params.stop_notification.value
-        or time.clock() - t < gui.params.stop_notification_seconds.value):
+        or time.process_time() - t < gui.params.stop_notification_seconds.value):
         return
 
     if isinstance(event, gdb.ExitedEvent):
@@ -69,7 +69,7 @@ def _on_stop(event):
 @in_gdb_thread
 def _on_cont(event):
     global _last_time
-    _last_time = time.clock()
+    _last_time = time.process_time()
 
 gdb.events.stop.connect(_on_stop)
 gdb.events.cont.connect(_on_cont)
