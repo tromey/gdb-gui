@@ -15,6 +15,7 @@
 
 import gdb
 
+
 class _Event(object):
     def __init__(self):
         self.funcs = []
@@ -28,6 +29,7 @@ class _Event(object):
     def post(self, *args, **kwargs):
         for fun in self.funcs:
             fun(*args, **kwargs)
+
 
 frame_changed = _Event()
 location_changed = _Event()

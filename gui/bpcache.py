@@ -22,6 +22,7 @@ import gui.adapt
 # destroyed.
 _breakpoint_source_map = {}
 
+
 def _breakpoint_created(bp):
     if bp.location is None:
         return
@@ -45,6 +46,7 @@ def _breakpoint_created(bp):
         else:
             _breakpoint_source_map[entry].add(bp.number)
 
+
 def _breakpoint_deleted(bp):
     num = bp.number
     for entry in _breakpoint_source_map:
@@ -53,11 +55,13 @@ def _breakpoint_deleted(bp):
             if len(_breakpoint_source_map[entry]) == 0:
                 gui.events.location_changed.post(entry, False)
 
+
 def _breakpoint_modified(bp):
     if bp.enabled:
         _breakpoint_created(bp)
     else:
         _breakpoint_deleted(bp)
+
 
 def any_breakpoint_at(filename, lineno):
     entry = (filename, lineno)
@@ -65,13 +69,14 @@ def any_breakpoint_at(filename, lineno):
         return False
     return len(_breakpoint_source_map[entry]) > 0
 
-if not hasattr(gdb.events, 'breakpoint_created'):
+
+if not hasattr(gdb.events, "breakpoint_created"):
     gui.adapt.notify_bug(15620)
 else:
     gdb.events.breakpoint_created.connect(_breakpoint_created)
     gdb.events.breakpoint_deleted.connect(_breakpoint_deleted)
 
-if not hasattr(gdb.events, 'breakpoint_modified'):
+if not hasattr(gdb.events, "breakpoint_modified"):
     gui.adapt.notify_bug(18620)
 else:
     gdb.events.breakpoint_modified.connect(_breakpoint_modified)

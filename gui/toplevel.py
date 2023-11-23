@@ -25,6 +25,7 @@ import threading
 from gi.repository import Pango
 from gui.startup import in_gdb_thread, in_gtk_thread
 
+
 class _ToplevelState(object):
     def __init__(self):
         gui.startup.start_gtk()
@@ -73,12 +74,11 @@ class _ToplevelState(object):
                 print("No windows")
                 return
 
-            print(' Num    Name')
+            print(" Num    Name")
             for winno in range(1, self.next_toplevel):
                 if winno in self.toplevels:
                     window = self.toplevels[winno]
-                    print(' %3d    %s' % (window.number,
-                                          window.window.get_title()))
+                    print(" %3d    %s" % (window.number, window.window.get_title()))
 
     @in_gtk_thread
     def _do_set_font(self, font_name):
@@ -125,7 +125,9 @@ class _ToplevelState(object):
     def windows(self):
         return list(self.toplevels.values())
 
+
 state = _ToplevelState()
+
 
 class Toplevel(object):
     def __init__(self, window_type):
@@ -133,7 +135,7 @@ class Toplevel(object):
         # The subclass must set this.
         self.window = None
         self.window_type = window_type
-        self.storage_name = window_type + '-' + str(self.type_number) + '-geom'
+        self.storage_name = window_type + "-" + str(self.type_number) + "-geom"
         gui.startup.send_to_gtk(self._do_gtk_initialize)
 
     @in_gtk_thread
@@ -145,7 +147,7 @@ class Toplevel(object):
     @in_gtk_thread
     def _do_gtk_initialize(self):
         self.gtk_initialize()
-        self.window.connect('configure-event', self._on_resize)
+        self.window.connect("configure-event", self._on_resize)
         geom = gui.storage.storage_manager.get(self.storage_name)
         if geom:
             self.window.parse_geometry(geom)
@@ -158,7 +160,7 @@ class Toplevel(object):
 
     @in_gtk_thread
     def _on_resize(self, widget, event):
-        geom = '%dx%d+%d+%d' % (event.width, event.height, event.x, event.y)
+        geom = "%dx%d+%d+%d" % (event.width, event.height, event.x, event.y)
         gdb.post_event(lambda: self._save_size(geom))
         return False
 

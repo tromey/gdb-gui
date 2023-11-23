@@ -27,6 +27,7 @@ from gui.framecache import FrameCommandInvoker
 from gui.startup import in_gdb_thread, in_gtk_thread
 from gi.repository import Gtk
 
+
 def format_frame(frame):
     result = {}
     result["name"] = frame.function()
@@ -42,10 +43,11 @@ def format_frame(frame):
     return result
     # FIXME args
 
+
 class StackWindow(gui.updatewindow.UpdateWindow):
     def __init__(self):
         self.raw = False
-        super(StackWindow, self).__init__('stack')
+        super(StackWindow, self).__init__("stack")
         # Connect events.
         # Update buttons.
 
@@ -53,11 +55,11 @@ class StackWindow(gui.updatewindow.UpdateWindow):
     def gtk_initialize(self):
         self.do_up = FrameCommandInvoker("up")
         self.do_down = FrameCommandInvoker("down")
-        builder = gui.startup.create_builder('stackwindow.xml')
+        builder = gui.startup.create_builder("stackwindow.xml")
         builder.connect_signals(self)
 
-        self.window = builder.get_object('stackwindow')
-        self.view = builder.get_object('view')
+        self.window = builder.get_object("stackwindow")
+        self.view = builder.get_object("view")
         self.text = Gtk.TextBuffer()
         self.view.set_buffer(self.text)
         self.view.modify_font(gui.params.font_manager.get_font())
@@ -67,7 +69,7 @@ class StackWindow(gui.updatewindow.UpdateWindow):
         self.text.delete(self.text.get_start_iter(), self.text.get_end_iter())
         frame_no = 1
         for frame in data:
-            self.text.insert_at_cursor('#%d ' % frame_no)
+            self.text.insert_at_cursor("#%d " % frame_no)
             frame_no = frame_no + 1
             # Goofball API.
             if isinstance(frame["name"], str):
@@ -80,8 +82,9 @@ class StackWindow(gui.updatewindow.UpdateWindow):
             # FIXME args
             self.text.insert_at_cursor("\n")
             if frame["line"] is not None:
-                self.text.insert_at_cursor("  at %s:%d\n" % (frame["filename"],
-                                                             frame["line"]))
+                self.text.insert_at_cursor(
+                    "  at %s:%d\n" % (frame["filename"], frame["line"])
+                )
             if frame["solib"] is not None:
                 self.text.insert_at_cursor("  [%s]\n" % frame["solib"])
 
@@ -91,11 +94,12 @@ class StackWindow(gui.updatewindow.UpdateWindow):
         try:
             start_frame = gdb.newest_frame()
             if not self.raw:
-                frame_iter = gdb.frames.execute_frame_filters(start_frame,
-                                                              0, -1)
+                frame_iter = gdb.frames.execute_frame_filters(start_frame, 0, -1)
                 if frame_iter is None:
-                    frame_iter = map(gdb.FrameDecorator.FrameDecorator,
-                                     gdb.FrameIterator.FrameIterator(start_frame))
+                    frame_iter = map(
+                        gdb.FrameDecorator.FrameDecorator,
+                        gdb.FrameIterator.FrameIterator(start_frame),
+                    )
             data = list(map(format_frame, frame_iter))
         except gdb.error:
             data = []
@@ -104,6 +108,7 @@ class StackWindow(gui.updatewindow.UpdateWindow):
     @in_gtk_thread
     def set_font(self, pango_font):
         self.view.modify_font(pango_font)
+
 
 def show_stack():
     # for now

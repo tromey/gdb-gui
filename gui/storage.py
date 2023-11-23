@@ -21,10 +21,11 @@ import errno
 import configparser
 import atexit
 
+
 class StorageManager:
     def __init__(self):
-        self.dir = os.path.join(GLib.get_user_config_dir(), 'gdb')
-        self.file = os.path.join(self.dir, 'settings')
+        self.dir = os.path.join(GLib.get_user_config_dir(), "gdb")
+        self.file = os.path.join(self.dir, "settings")
         try:
             os.mkdir(self.dir, 0o700)
         except OSError as exc:
@@ -33,30 +34,31 @@ class StorageManager:
         self.config = configparser.RawConfigParser()
         if self.file is not None:
             self.config.read(self.file)
-        if not self.config.has_section('general'):
-            self.config.add_section('general')
+        if not self.config.has_section("general"):
+            self.config.add_section("general")
         atexit.register(self.write)
 
     def get(self, name):
-        if self.config.has_option('general', name):
-            return self.config.get('general', name)
+        if self.config.has_option("general", name):
+            return self.config.get("general", name)
         return None
 
     def getboolean(self, name):
-        if self.config.has_option('general', name):
-            return self.config.getboolean('general', name)
+        if self.config.has_option("general", name):
+            return self.config.getboolean("general", name)
         return None
 
     def getint(self, name):
-        if self.config.has_option('general', name):
-            return self.config.getint('general', name)
+        if self.config.has_option("general", name):
+            return self.config.getint("general", name)
         return None
 
     def set(self, name, value):
-        self.config.set('general', name, value)
+        self.config.set("general", name, value)
 
     def write(self):
-        with open(self.file, 'wt') as save_file:
+        with open(self.file, "wt") as save_file:
             self.config.write(save_file)
+
 
 storage_manager = StorageManager()

@@ -19,12 +19,13 @@ import gdb
 import gui.logwindow
 from gui.startup import in_gdb_thread
 
+
 class DPrintfBreakpoint(gdb.Breakpoint):
     @in_gdb_thread
     def __init__(self, spec, window, arg):
         super(DPrintfBreakpoint, self).__init__(spec, gdb.BP_BREAKPOINT)
         self.window = window
-        self.command = 'printf ' + arg
+        self.command = "printf " + arg
 
     @in_gdb_thread
     def stop(self):

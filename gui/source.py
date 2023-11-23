@@ -31,6 +31,7 @@ import gui.bpcache
 
 from gi.repository import Gtk, GtkSource, GObject, Gdk, GdkPixbuf, Pango
 
+
 class BufferManager:
     def __init__(self):
         self.buffers = {}
@@ -38,7 +39,7 @@ class BufferManager:
         gui.params.source_theme.set_buffer_manager(self)
         gui.events.location_changed.connect(self._location_changed)
         # FIXME - emit a warning if this isn't available.
-        if hasattr(gdb.events, 'clear_objfiles'):
+        if hasattr(gdb.events, "clear_objfiles"):
             gdb.events.clear_objfiles.connect(self._clear_objfiles)
         self.empty_buffer = None
 
@@ -60,13 +61,13 @@ class BufferManager:
         while True:
             line = iter.get_line() + 1
             if line in line_set:
-                buffer.create_source_mark(None, 'executable', iter)
+                buffer.create_source_mark(None, "executable", iter)
             if not iter.forward_line():
                 break
 
     @in_gdb_thread
     def _get_lines_update(self, buffer, symtab):
-        if hasattr(symtab, 'linetable'):
+        if hasattr(symtab, "linetable"):
             line_set = set(symtab.linetable().source_lines())
             gui.startup.send_to_gtk(lambda: self._set_marks(buffer, line_set))
 
@@ -113,9 +114,9 @@ class BufferManager:
     @in_gtk_thread
     def update_breakpoint_location(self, sal, is_set):
         if is_set:
-            category = 'breakpoint'
+            category = "breakpoint"
         else:
-            category = 'executable'
+            category = "executable"
         [fullname, line] = sal
         if fullname in self.buffers:
             buffer = self.buffers[fullname]
@@ -125,8 +126,7 @@ class BufferManager:
 
     @in_gdb_thread
     def _location_changed(self, loc, is_set):
-        gui.startup.send_to_gtk(lambda: self.update_breakpoint_location(loc,
-                                                                        is_set))
+        gui.startup.send_to_gtk(lambda: self.update_breakpoint_location(loc, is_set))
 
     @in_gtk_thread
     def _gtk_clear_objfiles(self):
@@ -144,9 +144,10 @@ class BufferManager:
         for key in self.buffers:
             buff = self.buffers[key]
             # This could probably be more efficient.
-            buff.remove_source_marks(buff.get_start_iter(),
-                                     buff.get_end_iter(),
-                                     'pointer')
+            buff.remove_source_marks(
+                buff.get_start_iter(), buff.get_end_iter(), "pointer"
+            )
+
 
 buffer_manager = BufferManager()
 
@@ -168,7 +169,7 @@ def get_current_location():
         # No frame - try 'main'.
         try:
             frame = None
-            sym = gdb.lookup_global_symbol('main')
+            sym = gdb.lookup_global_symbol("main")
             lineno = sym.line
             symtab = sym.symtab
             filename = symtab.fullname()
@@ -178,6 +179,7 @@ def get_current_location():
         except AttributeError:
             return (None, None, None, None)
     return (frame, symtab, filename, lineno)
+
 
 class LRUHandler:
     def __init__(self):
@@ -190,10 +192,9 @@ class LRUHandler:
         if len(self.windows) == 0:
             self.work_location = (frame, symtab, srcfile, srcline)
             SourceWindow()
-        gui.startup.send_to_gtk(lambda: self.show_source(frame,
-                                                         symtab,
-                                                         srcfile,
-                                                         srcline))
+        gui.startup.send_to_gtk(
+            lambda: self.show_source(frame, symtab, srcfile, srcline)
+        )
 
     @in_gdb_thread
     def new_source_window(self):
@@ -204,16 +205,15 @@ class LRUHandler:
     def on_event(self, *args):
         (frame, symtab, filename, lineno) = get_current_location()
         if filename is not None:
-            gui.startup.send_to_gtk(lambda: self.show_source(frame,
-                                                             symtab,
-                                                             filename,
-                                                             lineno))
+            gui.startup.send_to_gtk(
+                lambda: self.show_source(frame, symtab, filename, lineno)
+            )
 
     @in_gdb_thread
     def _connect_events(self):
         gdb.events.stop.connect(self.on_event)
         gui.events.frame_changed.connect(self.on_event)
-        if hasattr(gdb.events, 'new_objfile'):
+        if hasattr(gdb.events, "new_objfile"):
             gdb.events.new_objfile.connect(self._new_objfile)
 
     @in_gdb_thread
@@ -263,19 +263,20 @@ class LRUHandler:
         if self.work_location is not None:
             (frame, symtab, filename, lineno) = self.work_location
             self.work_location = None
-            gui.startup.send_to_gtk(lambda: self.show_source(frame,
-                                                             symtab,
-                                                             filename,
-                                                             lineno))
+            gui.startup.send_to_gtk(
+                lambda: self.show_source(frame, symtab, filename, lineno)
+            )
 
     @in_gdb_thread
     def _new_objfile(self, event):
         if len(gdb.objfiles()) == 1:
             self.on_event()
 
+
 lru_handler = LRUHandler()
 
 BUTTON_NAMES = ["step", "next", "continue", "finish", "stop", "up", "down"]
+
 
 class SourceWindow(gui.updatewindow.UpdateWindow):
     def _get_pixmap(self, filename):
@@ -283,7 +284,7 @@ class SourceWindow(gui.updatewindow.UpdateWindow):
         return GdkPixbuf.Pixbuf.new_from_file(path)
 
     def __init__(self):
-        super(SourceWindow, self).__init__('source')
+        super(SourceWindow, self).__init__("source")
         gdb.events.cont.connect(self._on_cont_event)
         # Update the buttons.
         self.on_event()
@@ -300,7 +301,7 @@ class SourceWindow(gui.updatewindow.UpdateWindow):
         self.do_up = FrameCommandInvoker("up")
         self.do_down = FrameCommandInvoker("down")
 
-        builder = gui.startup.create_builder('sourcewindow.xml')
+        builder = gui.startup.create_builder("sourcewindow.xml")
         builder.connect_signals(self)
         self.window = builder.get_object("sourcewindow")
         self.view = builder.get_object("view")
@@ -315,16 +316,16 @@ class SourceWindow(gui.updatewindow.UpdateWindow):
         self.view.set_tab_width(gui.params.tab_width.value)
 
         attrs = GtkSource.MarkAttributes()
-        attrs.set_pixbuf(self._get_pixmap('icons/ok.png'))
-        self.view.set_mark_attributes('executable', attrs, 0)
+        attrs.set_pixbuf(self._get_pixmap("icons/ok.png"))
+        self.view.set_mark_attributes("executable", attrs, 0)
 
         attrs = GtkSource.MarkAttributes()
-        attrs.set_pixbuf(self._get_pixmap('icons/breakpoint-marker.png'))
-        self.view.set_mark_attributes('breakpoint', attrs, 1)
+        attrs.set_pixbuf(self._get_pixmap("icons/breakpoint-marker.png"))
+        self.view.set_mark_attributes("breakpoint", attrs, 1)
 
         attrs = GtkSource.MarkAttributes()
-        attrs.set_pixbuf(self._get_pixmap('icons/line-pointer.png'))
-        self.view.set_mark_attributes('pointer', attrs, 2)
+        attrs.set_pixbuf(self._get_pixmap("icons/line-pointer.png"))
+        self.view.set_mark_attributes("pointer", attrs, 2)
 
         self.view.set_buffer(buffer_manager.get_empty_buffer())
         lru_handler.add(self)
@@ -363,14 +364,14 @@ class SourceWindow(gui.updatewindow.UpdateWindow):
         filename = self.view.get_buffer().filename
         line = textiter.get_line() + 1
         if gui.bpcache.any_breakpoint_at(filename, line):
-            fun = Invoker("clear %s:%d" % (filename,line))
+            fun = Invoker("clear %s:%d" % (filename, line))
         else:
             fun = Invoker("break %s:%d" % (filename, line))
         fun()
 
     def _do_scroll(self, buff, srcline):
         iter = buff.get_iter_at_line(srcline)
-        buff.create_source_mark(None, 'pointer', iter)
+        buff.create_source_mark(None, "pointer", iter)
         buff.place_cursor(iter)
         self.view.scroll_mark_onscreen(buff.get_insert())
         return False

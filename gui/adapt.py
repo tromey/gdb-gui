@@ -24,24 +24,22 @@ bugs = {
     15620: """Your gdb doesn't have a "new breakpoint" event.
 This means that the source windows will not show you where
 breakpoints have been set.""",
-
     13598: """Your gdb doesn't have a "before prompt" event.
 This means that various windows won't be able to react to
 commands like "up" or "down".""",
-
     18385: """Your gdb doesn't expose locations on a gdb.Breakpoint.
 This can be worked around, but maybe not always reliably.
 This means that sometimes breakpoints won't display in source windows.""",
-
     18620: """Your gdb doesn't have a "breakpoint modified" event.
 This means that when a pending breakpoint is resolved, the GUI won't
-be able to update to reflect that fact."""
+be able to update to reflect that fact.""",
 }
 
 _warning = """See https://sourceware.org/bugzilla/show_bug.cgi?id=%s
 for more information."""
 
 _first_report = True
+
 
 def notify_bug(bugno):
     if not gui.params.warn_missing.value:

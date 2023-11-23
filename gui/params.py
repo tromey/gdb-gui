@@ -24,33 +24,38 @@ import gui.toplevel
 from gui.startup import in_gdb_thread, in_gtk_thread
 from gi.repository import GtkSource, Pango
 
+
 class _SetBase(gdb.Command):
     """Generic command for modifying GUI settings."""
 
     def __init__(self):
-        super(_SetBase, self).__init__('set gui', gdb.COMMAND_NONE,
-                                       prefix = True)
+        super(_SetBase, self).__init__("set gui", gdb.COMMAND_NONE, prefix=True)
+
 
 class _SetTitleBase(gdb.Command):
     """Generic command for modifying GUI window titles."""
 
     def __init__(self):
-        super(_SetTitleBase, self).__init__('set gui title', gdb.COMMAND_NONE,
-                                            prefix = True)
+        super(_SetTitleBase, self).__init__(
+            "set gui title", gdb.COMMAND_NONE, prefix=True
+        )
+
 
 class _ShowBase(gdb.Command):
     """Generic command for showing GUI settings."""
 
     def __init__(self):
-        super(_ShowBase, self).__init__('show gui', gdb.COMMAND_NONE,
-                                        prefix = True)
+        super(_ShowBase, self).__init__("show gui", gdb.COMMAND_NONE, prefix=True)
+
 
 class _ShowTitleBase(gdb.Command):
     """Generic command for showing GUI window titles."""
 
     def __init__(self):
-        super(_ShowTitleBase, self).__init__('show gui title', gdb.COMMAND_NONE,
-                                             prefix = True)
+        super(_ShowTitleBase, self).__init__(
+            "show gui title", gdb.COMMAND_NONE, prefix=True
+        )
+
 
 # Like gdb.Parameter, but has a default and automatically handles
 # storage.
@@ -58,11 +63,10 @@ class _StoredParameter(gdb.Parameter):
     # NAME_FORMAT is like "%s" - NAME is substituted.
     # To construct the parameter name, "gui " is prefixed.
     def __init__(self, name_format, name, default, c_class, p_kind, *args):
-        full_name = 'gui ' + name_format % name
-        self.storage_name = '-'.join((name_format % name).split(' '))
+        full_name = "gui " + name_format % name
+        self.storage_name = "-".join((name_format % name).split(" "))
         storage = gui.storage.storage_manager
-        super(_StoredParameter, self).__init__(full_name, c_class, p_kind,
-                                               *args)
+        super(_StoredParameter, self).__init__(full_name, c_class, p_kind, *args)
         if p_kind is gdb.PARAM_BOOLEAN:
             val = storage.getboolean(self.storage_name)
         elif p_kind is gdb.PARAM_STRING or p_kind is gdb.PARAM_ENUM:
@@ -87,19 +91,25 @@ class _StoredParameter(gdb.Parameter):
             self.storage.set(self.storage_name, self.value)
         return ""
 
+
 class _Theme(_StoredParameter):
     # Silly gdb requirement.
-    ""
+    """"""
 
     set_doc = "Set the source window theme."
     show_doc = "Show the source window theme."
 
     def __init__(self):
         self.manager = GtkSource.StyleSchemeManager.get_default()
-        super(_Theme, self).__init__('%s', 'theme', None,
-                                     gdb.COMMAND_NONE, gdb.PARAM_ENUM,
-                                     # Probably the wrong thread.
-                                     self.manager.get_scheme_ids())
+        super(_Theme, self).__init__(
+            "%s",
+            "theme",
+            None,
+            gdb.COMMAND_NONE,
+            gdb.PARAM_ENUM,
+            # Probably the wrong thread.
+            self.manager.get_scheme_ids(),
+        )
 
     @in_gdb_thread
     def set_buffer_manager(self, b):
@@ -120,17 +130,19 @@ class _Theme(_StoredParameter):
         self.buffer_manager.change_theme()
         return ""
 
+
 class _Font(_StoredParameter):
     # Silly gdb requirement.
-    ""
+    """"""
 
     set_doc = "Set the source window font."
     show_doc = "Show the source window font."
 
     def __init__(self):
         self.manager = GtkSource.StyleSchemeManager.get_default()
-        super(_Font, self).__init__('%s', 'font', 'monospace',
-                                    gdb.COMMAND_NONE, gdb.PARAM_STRING)
+        super(_Font, self).__init__(
+            "%s", "font", "monospace", gdb.COMMAND_NONE, gdb.PARAM_STRING
+        )
 
     @in_gtk_thread
     def get_font(self):
@@ -147,11 +159,13 @@ class _Font(_StoredParameter):
         super(_Font, self).get_set_string()
         return ""
 
+
 title_params = {}
+
 
 class _Title(_StoredParameter):
     # Silly gdb requirement.
-    ""
+    """"""
 
     def __init__(self, name, default):
         title_params[name] = self
@@ -159,9 +173,10 @@ class _Title(_StoredParameter):
         self.set_doc = "Set the %s window title format." % self.name
         self.show_doc = "Show the %s window title format." % self.name
         self.manager = GtkSource.StyleSchemeManager.get_default()
-        super(_Title, self).__init__('title %s', name, default,
-                                     gdb.COMMAND_NONE, gdb.PARAM_STRING)
-        val = self.storage.get('title-%s' % name)
+        super(_Title, self).__init__(
+            "title %s", name, default, gdb.COMMAND_NONE, gdb.PARAM_STRING
+        )
+        val = self.storage.get("title-%s" % name)
         if val is not None:
             self.value = val
         else:
@@ -169,8 +184,7 @@ class _Title(_StoredParameter):
 
     @in_gdb_thread
     def get_show_string(self, pvalue):
-        return "The current title format for the %s is: %s" % (self.name,
-                                                               self.value)
+        return "The current title format for the %s is: %s" % (self.name, self.value)
 
     @in_gdb_thread
     def get_set_string(self):
@@ -178,16 +192,18 @@ class _Title(_StoredParameter):
         gui.toplevel.state.update_titles()
         return ""
 
+
 class _Missing(_StoredParameter):
     # Silly gdb requirement.
-    ""
+    """"""
 
     set_doc = "Set whether to mention missing gdb features."
     show_doc = "Show whether to mention missing gdb features."
 
     def __init__(self):
-        super(_Missing, self).__init__('%s', 'mention-missing', True,
-                                       gdb.COMMAND_NONE, gdb.PARAM_BOOLEAN)
+        super(_Missing, self).__init__(
+            "%s", "mention-missing", True, gdb.COMMAND_NONE, gdb.PARAM_BOOLEAN
+        )
 
     @in_gdb_thread
     def get_show_string(self, pvalue):
@@ -197,21 +213,22 @@ class _Missing(_StoredParameter):
             v = "off"
         return "Whether to warn about missing gdb features: " + v
 
+
 class _Lines(_StoredParameter):
     # Silly gdb requirement.
-    ""
+    """"""
 
     set_doc = "Set whether to display line numbers in the source window."
     show_doc = "Show whether to display line numbers in the source window."
 
     def __init__(self):
-        super(_Lines, self).__init__('%s', 'line-numbers', False,
-                                     gdb.COMMAND_NONE, gdb.PARAM_BOOLEAN)
+        super(_Lines, self).__init__(
+            "%s", "line-numbers", False, gdb.COMMAND_NONE, gdb.PARAM_BOOLEAN
+        )
 
     @in_gdb_thread
     def get_show_string(self, pvalue):
-        return "The current title format for the %s is: %s" % (self.name,
-                                                               self.value)
+        return "The current title format for the %s is: %s" % (self.name, self.value)
 
     @in_gdb_thread
     def get_set_string(self):
@@ -219,37 +236,43 @@ class _Lines(_StoredParameter):
         gui.toplevel.state.set_line_numbers(self.value)
         return ""
 
+
 class _Lines(_StoredParameter):
     # Silly gdb requirement.
-    ""
+    """"""
 
     set_doc = "Set whether to display line numbers in the source window."
     show_doc = "Show whether to display line numbers in the source window."
 
     def __init__(self):
-        super(_Lines, self).__init__('%s', 'line-numbers', False,
-                                     gdb.COMMAND_NONE, gdb.PARAM_BOOLEAN)
+        super(_Lines, self).__init__(
+            "%s", "line-numbers", False, gdb.COMMAND_NONE, gdb.PARAM_BOOLEAN
+        )
 
     @in_gdb_thread
     def get_show_string(self, pvalue):
-        return "Whether to display line numbers in the source window is: %s" % self.value
+        return (
+            "Whether to display line numbers in the source window is: %s" % self.value
+        )
 
     @in_gdb_thread
     def get_set_string(self):
         super(_Lines, self).get_set_string()
         gui.toplevel.state.set_line_numbers(self.value)
         return ""
+
 
 class _Tabs(_StoredParameter):
     # Silly gdb requirement.
-    ""
+    """"""
 
     set_doc = "Set width of tabs in the source window."
     show_doc = "Show width of tabs in the source window."
 
     def __init__(self):
-        super(_Tabs, self).__init__('%s', 'tab-width', 8,
-                                    gdb.COMMAND_NONE, gdb.PARAM_ZINTEGER)
+        super(_Tabs, self).__init__(
+            "%s", "tab-width", 8, gdb.COMMAND_NONE, gdb.PARAM_ZINTEGER
+        )
 
     @in_gdb_thread
     def get_show_string(self, pvalue):
@@ -261,39 +284,44 @@ class _Tabs(_StoredParameter):
         gui.toplevel.state.set_tab_width(self.value)
         return ""
 
+
 class _StopNotification(_StoredParameter):
     # Silly gdb requirement.
-    ""
+    """"""
 
     set_doc = "Set whether stop notifications are displayed."
     show_doc = "Show whether stop notifications are displayed."
 
     def __init__(self):
-        super(_StopNotification, self).__init__('%s', 'stop-notification', True,
-                                                gdb.COMMAND_RUNNING,
-                                                gdb.PARAM_BOOLEAN)
+        super(_StopNotification, self).__init__(
+            "%s", "stop-notification", True, gdb.COMMAND_RUNNING, gdb.PARAM_BOOLEAN
+        )
 
     @in_gdb_thread
     def get_show_string(self, pvalue):
         return "Whether stop notifications are displayed is: %s" % self.value
 
+
 class _StopNotificationSeconds(_StoredParameter):
     # Silly gdb requirement.
-    ""
+    """"""
 
     set_doc = "Set stop notification timeout in seconds."
     show_doc = "Show stop notification timeout."
 
     def __init__(self):
-        super(_StopNotificationSeconds, self).__init__('%s',
-                                                       'stop-notification-seconds',
-                                                       120,
-                                                       gdb.COMMAND_RUNNING,
-                                                       gdb.PARAM_ZINTEGER)
+        super(_StopNotificationSeconds, self).__init__(
+            "%s",
+            "stop-notification-seconds",
+            120,
+            gdb.COMMAND_RUNNING,
+            gdb.PARAM_ZINTEGER,
+        )
 
     @in_gdb_thread
     def get_show_string(self, pvalue):
         return "Stop notifications are displayed after %d seconds." % self.value
+
 
 _SetBase()
 _SetTitleBase()
@@ -304,10 +332,10 @@ font_manager = _Font()
 stop_notification = _StopNotification()
 stop_notification_seconds = _StopNotificationSeconds()
 
-_Title('source', '\\W{basename} [GDB Source @\\W{number}]')
-_Title('display', '\\W{command} [GDB Display @\\W{number}]')
-_Title('log', '[GDB Log @\\W{number}]\\W{default}')
-_Title('stack', '[GDB Stack @\\W{number}]')
+_Title("source", "\\W{basename} [GDB Source @\\W{number}]")
+_Title("display", "\\W{command} [GDB Display @\\W{number}]")
+_Title("log", "[GDB Log @\\W{number}]\\W{default}")
+_Title("stack", "[GDB Stack @\\W{number}]")
 
 warn_missing = _Missing()
 line_numbers = _Lines()

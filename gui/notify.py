@@ -27,6 +27,7 @@ _initialized = False
 
 _last_time = None
 
+
 @in_gtk_thread
 def _show_notification(title, content):
     global _initialized
@@ -36,40 +37,44 @@ def _show_notification(title, content):
     n = Notify.Notification.new(title, content)
     n.show()
 
+
 @in_gdb_thread
 def _on_stop(event):
     global _last_time
     t = _last_time
     _last_time = None
 
-    if (t is None
+    if (
+        t is None
         or not gui.params.stop_notification.value
-        or time.process_time() - t < gui.params.stop_notification_seconds.value):
+        or time.process_time() - t < gui.params.stop_notification_seconds.value
+    ):
         return
 
     if isinstance(event, gdb.ExitedEvent):
-        title = 'gdb - inferior exited'
-        if hasattr(event, 'exit_code'):
-            content = 'inferior exited with code ' + str(event.exit_code)
+        title = "gdb - inferior exited"
+        if hasattr(event, "exit_code"):
+            content = "inferior exited with code " + str(event.exit_code)
         else:
-            content = 'inferior exited, code unavailable'
+            content = "inferior exited, code unavailable"
     elif isinstance(event, gdb.BreakpointEvent):
-        title = 'gdb - inferior stopped'
-        content = ('inferior stopped at breakpoint '
-                   + str(event.breakpoints[0].number))
+        title = "gdb - inferior stopped"
+        content = "inferior stopped at breakpoint " + str(event.breakpoints[0].number)
     elif isinstance(event, gdb.SignalEvent):
-        title = 'gdb - inferior stopped'
-        content = 'inferior stopped with signal: ' + event.stop_signal
+        title = "gdb - inferior stopped"
+        content = "inferior stopped with signal: " + event.stop_signal
     else:
-        title = 'gdb - inferior stopped'
-        content = 'inferior stopped, reason unknown'
+        title = "gdb - inferior stopped"
+        content = "inferior stopped, reason unknown"
 
     gui.startup.send_to_gtk(lambda: _show_notification(title, content))
+
 
 @in_gdb_thread
 def _on_cont(event):
     global _last_time
     _last_time = time.process_time()
+
 
 gdb.events.stop.connect(_on_stop)
 gdb.events.cont.connect(_on_cont)

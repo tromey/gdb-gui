@@ -27,38 +27,38 @@ from difflib import SequenceMatcher, Differ
 # FIXME: TO DO:
 # * highlight the changes
 
+
 class DisplayWindow(gui.updatewindow.UpdateWindow):
-    def __init__(self, command, diff = False):
+    def __init__(self, command, diff=False):
         self.command = command
         self.diff = diff
         self.last_text = None
-        super(DisplayWindow, self).__init__('display')
+        super(DisplayWindow, self).__init__("display")
 
     @in_gdb_thread
     def on_event(self):
         try:
-            text = gdb.execute(self.command, to_string = True)
+            text = gdb.execute(self.command, to_string=True)
         except gdb.error as what:
             text = str(what)
         gui.startup.send_to_gtk(lambda: self._update(text))
 
     @in_gtk_thread
     def gtk_initialize(self):
-        builder = gui.startup.create_builder('logwindow.xml')
+        builder = gui.startup.create_builder("logwindow.xml")
         builder.connect_signals(self)
 
-        self.window = builder.get_object('logwindow')
-        self.view = builder.get_object('textview')
-        self.view.modify_font(Pango.FontDescription('Fixed'))
+        self.window = builder.get_object("logwindow")
+        self.view = builder.get_object("textview")
+        self.view.modify_font(Pango.FontDescription("Fixed"))
 
-        self.buffer = builder.get_object('buffer')
+        self.buffer = builder.get_object("buffer")
 
         if self.diff:
-            self.tag = self.buffer.create_tag('new', foreground = 'red')
+            self.tag = self.buffer.create_tag("new", foreground="red")
 
     def _update(self, text):
-        self.buffer.delete(self.buffer.get_start_iter(),
-                           self.buffer.get_end_iter())
+        self.buffer.delete(self.buffer.get_start_iter(), self.buffer.get_end_iter())
         if self.diff:
             if self.last_text is None:
                 self.last_text = text.splitlines(1)
@@ -67,14 +67,13 @@ class DisplayWindow(gui.updatewindow.UpdateWindow):
                 split = text.splitlines(1)
                 d = Differ()
                 for line in d.compare(self.last_text, split):
-                    if line[0] == ' ':
-                        self.buffer.insert(self.buffer.get_end_iter(),
-                                           line[2:])
-                    elif line[0] == '+':
-                        self.buffer.insert_with_tags(self.buffer.get_end_iter(),
-                                                     line[2:],
-                                                     self.tag)
-                    self.buffer.insert(self.buffer.get_end_iter(), '\n')
+                    if line[0] == " ":
+                        self.buffer.insert(self.buffer.get_end_iter(), line[2:])
+                    elif line[0] == "+":
+                        self.buffer.insert_with_tags(
+                            self.buffer.get_end_iter(), line[2:], self.tag
+                        )
+                    self.buffer.insert(self.buffer.get_end_iter(), "\n")
                 self.last_text = split
                 return
         self.buffer.insert_at_cursor(text)

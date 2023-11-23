@@ -21,6 +21,7 @@ from gui.startup import in_gdb_thread, in_gtk_thread
 import gdb
 import gui.events
 
+
 class UpdateWindow(Toplevel):
     """A window that automatically updates in response to gdb changes.
 

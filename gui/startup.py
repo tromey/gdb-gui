@@ -22,9 +22,9 @@ import gui
 
 import gi
 
-gi.require_version('Gtk', '3.0')
-gi.require_version('GtkSource', '3.0')
-gi.require_version('Notify', '0.7')
+gi.require_version("Gtk", "3.0")
+gi.require_version("GtkSource", "3.0")
+gi.require_version("Notify", "0.7")
 
 from gi.repository import Gtk, Gdk, GObject, GtkSource, GLib, GdkPixbuf
 
@@ -32,10 +32,12 @@ from gi.repository import Gtk, Gdk, GObject, GtkSource, GLib, GdkPixbuf
 
 _event_queue = queue.Queue()
 
+
 def send_to_gtk(func):
     _event_queue.put(func)
     # The payload is arbitrary.
     os.write(write_pipe, bytes(1))
+
 
 class _GtkThread(gdb.Thread):
     def handle_queue(self, source, condition):
@@ -51,17 +53,19 @@ class _GtkThread(gdb.Thread):
         GObject.type_register(GtkSource.View)
         Gtk.main()
 
+
 _gdb_thread = threading.current_thread()
 _t = None
+
 
 def start_gtk():
     global _t
     if _t is None:
-        GLib.set_application_name('GDB')
-        GLib.set_prgname('GDB')
-        Gdk.set_program_class('GDB')
-        Gtk.Window.set_default_icon_name('GDB')
-        path = os.path.join(gui.self_dir, 'icons/face-raspberry-symbolic.svg')
+        GLib.set_application_name("GDB")
+        GLib.set_prgname("GDB")
+        Gdk.set_program_class("GDB")
+        Gtk.Window.set_default_icon_name("GDB")
+        path = os.path.join(gui.self_dir, "icons/face-raspberry-symbolic.svg")
         Gtk.Window.set_default_icon(GdkPixbuf.Pixbuf.new_from_file(path))
         GObject.threads_init()
         Gdk.threads_init()
@@ -69,21 +73,26 @@ def start_gtk():
         _t.setDaemon(True)
         _t.start()
 
+
 def create_builder(filename):
     builder = Gtk.Builder()
     builder.add_from_file(os.path.join(gui.self_dir, filename))
     return builder
+
 
 def in_gdb_thread(func):
     def ensure_gdb_thread(*args, **kwargs):
         if threading.current_thread() is not _gdb_thread:
             raise RuntimeError("must run '%s' in gdb thread" % repr(func))
         return func(*args, **kwargs)
+
     return ensure_gdb_thread
+
 
 def in_gtk_thread(func):
     def ensure_gtk_thread(*args, **kwargs):
         if threading.current_thread() is not _t:
             raise RuntimeError("must run '%s' in Gtk thread" % repr(func))
         return func(*args, **kwargs)
+
     return ensure_gtk_thread

@@ -24,16 +24,18 @@ gui_prompt_substitutions = dict(gdb.prompt.prompt_substitutions)
 
 _current_window_for_prompt = None
 
+
 def _prompt_window(attr):
     if _current_window_for_prompt is None:
-        return ''
+        return ""
     if attr is None:
-        return ''
+        return ""
     if not hasattr(_current_window_for_prompt, attr):
         return None
     return str(getattr(_current_window_for_prompt, attr))
 
-gui_prompt_substitutions['W'] = _prompt_window
+
+gui_prompt_substitutions["W"] = _prompt_window
 
 # GDB's API should do this...
 def substitute_prompt_with_window(prompt, window):
@@ -49,6 +51,7 @@ def substitute_prompt_with_window(prompt, window):
         _current_window_for_prompt = None
     return result
 
+
 # GDB's API should do this...
 def prompt_help_with_window(window):
     global _current_window_for_prompt
@@ -62,6 +65,7 @@ def prompt_help_with_window(window):
         gdb.prompt.prompt_substitutions = save
         _current_window_for_prompt = None
     return result
+
 
 @in_gdb_thread
 def is_running():

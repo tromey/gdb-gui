@@ -25,25 +25,26 @@ from gui.startup import in_gtk_thread
 
 default_log_window = None
 
+
 class LogWindow(gui.toplevel.Toplevel):
     def __init__(self):
         global default_log_window
         if default_log_window is not None:
-            default_log_window.default = ''
+            default_log_window.default = ""
         default_log_window = self
         # For the window title.
-        self.default = ' [Default]'
-        super(LogWindow, self).__init__('log')
+        self.default = " [Default]"
+        super(LogWindow, self).__init__("log")
 
     @in_gtk_thread
     def gtk_initialize(self):
-        builder = gui.startup.create_builder('logwindow.xml')
+        builder = gui.startup.create_builder("logwindow.xml")
         builder.connect_signals(self)
 
-        self.window = builder.get_object('logwindow')
-        self.view = builder.get_object('textview')
+        self.window = builder.get_object("logwindow")
+        self.view = builder.get_object("textview")
         self.view.modify_font(gui.params.font_manager.get_font())
-        self.buffer = builder.get_object('buffer')
+        self.buffer = builder.get_object("buffer")
 
     @in_gtk_thread
     def set_font(self, font):
@@ -56,7 +57,7 @@ class LogWindow(gui.toplevel.Toplevel):
             for window in gui.toplevel.state.windows():
                 if isinstance(window, LogWindow):
                     default_log_window = window
-                    window.default = ' [Default]'
+                    window.default = " [Default]"
                     window.update_title()
                     break
 

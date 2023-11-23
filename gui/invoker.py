@@ -16,6 +16,7 @@
 import gdb
 from gui.startup import in_gdb_thread
 
+
 class Invoker(object):
     """A simple class that can invoke a gdb command.
     This is suitable for use as an event handler in Gtk."""
@@ -26,7 +27,7 @@ class Invoker(object):
     # This is invoked in the gdb thread to run the command.
     @in_gdb_thread
     def do_call(self):
-        gdb.execute(self.cmd, from_tty = True, to_string = True)
+        gdb.execute(self.cmd, from_tty=True, to_string=True)
 
     # The object itself is the Gtk event handler -- though really this
     # can be run in any thread.
