@@ -1,4 +1,4 @@
-# Copyright (C) 2012, 2013, 2015 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2012, 2013, 2015, 2023 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,12 +15,7 @@
 
 import gdb
 import threading
-try:
-    import queue
-except ImportError:
-    # Python 2.
-    import Queue
-    queue = Queue
+import queue
 import os
 import os.path
 import gui
@@ -42,8 +37,7 @@ _event_queue = queue.Queue()
 
 def send_to_gtk(func):
     _event_queue.put(func)
-    # The payload is arbitrary, and bytes(1) is chosen to work on both
-    # Python 2 and Python 3.
+    # The payload is arbitrary.
     os.write(write_pipe, bytes(1))
 
 class _GtkThread(threading.Thread):

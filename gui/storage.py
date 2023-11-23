@@ -1,4 +1,4 @@
-# Copyright (C) 2015 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2015, 2023 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,12 +18,7 @@
 from gi.repository import GLib
 import os
 import errno
-try:
-    import configparser
-except ImportError:
-    # Python 2.
-    import ConfigParser
-    configparser = ConfigParser
+import configparser
 import atexit
 
 class StorageManager:
