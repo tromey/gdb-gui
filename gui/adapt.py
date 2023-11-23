@@ -16,6 +16,7 @@
 # Adapt to gdb issues.
 
 import gdb
+
 import gui.params
 
 # The rule for adding a new entry here is that the bug must have some

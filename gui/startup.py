@@ -13,20 +13,21 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import gdb
-import threading
-import queue
 import os
 import os.path
-import gui
+import queue
+import threading
 
+import gdb
 import gi
+
+import gui
 
 gi.require_version("Gtk", "3.0")
 gi.require_version("GtkSource", "3.0")
 gi.require_version("Notify", "0.7")
 
-from gi.repository import Gtk, Gdk, GObject, GtkSource, GLib, GdkPixbuf
+from gi.repository import Gdk, GdkPixbuf, GLib, GObject, Gtk, GtkSource
 
 (read_pipe, write_pipe) = os.pipe()
 

@@ -15,13 +15,14 @@
 
 # Notifications
 
-import gdb
-import gui.params
-import gui.startup
 import time
 
+import gdb
 from gi.repository import Notify
-from gui.startup import in_gtk_thread, in_gdb_thread
+
+import gui.params
+import gui.startup
+from gui.startup import in_gdb_thread, in_gtk_thread
 
 _initialized = False
 

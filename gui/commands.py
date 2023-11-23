@@ -13,18 +13,20 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import re
+
 import gdb
-import gui.startup
-import gui.source
-import gui.stack
-import gui.logwindow
-import gui.toplevel
+
+import gui.adapt
+import gui.display
 import gui.dprintf
 import gui.events
-import gui.display
 import gui.gdbutil
-import gui.adapt
-import re
+import gui.logwindow
+import gui.source
+import gui.stack
+import gui.startup
+import gui.toplevel
 from gui.startup import in_gtk_thread
 
 

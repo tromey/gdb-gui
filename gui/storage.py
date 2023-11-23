@@ -15,11 +15,12 @@
 
 # Storage management.
 
-from gi.repository import GLib
-import os
-import errno
-import configparser
 import atexit
+import configparser
+import errno
+import os
+
+from gi.repository import GLib
 
 
 class StorageManager:

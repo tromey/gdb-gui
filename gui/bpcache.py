@@ -14,8 +14,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import gdb
-import gui.events
+
 import gui.adapt
+import gui.events
 
 # This maps from (FILENAME,LINE) to a set of breakpoints referencing
 # that file/line.  Then we emit events when entries are created or

@@ -16,16 +16,16 @@
 # Stack view.
 
 import gdb
-import gdb.frames
 import gdb.FrameDecorator
 import gdb.FrameIterator
-import gui.updatewindow
-import gui.startup
-import gui.params
+import gdb.frames
+from gi.repository import Gtk
 
+import gui.params
+import gui.startup
+import gui.updatewindow
 from gui.framecache import FrameCommandInvoker
 from gui.startup import in_gdb_thread, in_gtk_thread
-from gi.repository import Gtk
 
 
 def format_frame(frame):

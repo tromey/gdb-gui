@@ -15,12 +15,13 @@
 
 # Log window.
 
-import gdb
-import gui.toplevel
-import gui.startup
 import functools
 
+import gdb
 from gi.repository import Gtk, Pango
+
+import gui.startup
+import gui.toplevel
 from gui.startup import in_gtk_thread
 
 default_log_window = None

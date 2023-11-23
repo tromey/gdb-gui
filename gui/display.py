@@ -15,14 +15,16 @@
 
 # Log window.
 
-import gdb
-import gui.updatewindow
-import gui.startup
-from gi.repository import Gtk, Pango
 import functools
-from gui.startup import in_gdb_thread, in_gtk_thread
+from difflib import Differ, SequenceMatcher
+
+import gdb
+from gi.repository import Gtk, Pango
+
 import gui.events
-from difflib import SequenceMatcher, Differ
+import gui.startup
+import gui.updatewindow
+from gui.startup import in_gdb_thread, in_gtk_thread
 
 # FIXME: TO DO:
 # * highlight the changes

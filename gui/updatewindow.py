@@ -15,11 +15,12 @@
 
 # Auto-updating window.
 
-from gui.toplevel import Toplevel
+import gdb
+
+import gui.events
 import gui.startup
 from gui.startup import in_gdb_thread, in_gtk_thread
-import gdb
-import gui.events
+from gui.toplevel import Toplevel
 
 
 class UpdateWindow(Toplevel):

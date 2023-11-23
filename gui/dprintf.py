@@ -16,6 +16,7 @@
 # dprintf-like machinery.
 
 import gdb
+
 import gui.logwindow
 from gui.startup import in_gdb_thread
 

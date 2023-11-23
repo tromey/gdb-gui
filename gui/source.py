@@ -15,21 +15,22 @@
 
 # Source view.
 
-import gdb
-import gui
-import gui.updatewindow
-from gui.invoker import Invoker
-from gui.framecache import FrameCommandInvoker
-import gui.startup
-from gui.startup import in_gdb_thread, in_gtk_thread
-import gui.toplevel
-import gui.events
 import os.path
+
+import gdb
+from gi.repository import Gdk, GdkPixbuf, GObject, Gtk, GtkSource, Pango
+
+import gui
+import gui.bpcache
+import gui.events
 import gui.gdbutil
 import gui.params
-import gui.bpcache
-
-from gi.repository import Gtk, GtkSource, GObject, Gdk, GdkPixbuf, Pango
+import gui.startup
+import gui.toplevel
+import gui.updatewindow
+from gui.framecache import FrameCommandInvoker
+from gui.invoker import Invoker
+from gui.startup import in_gdb_thread, in_gtk_thread
 
 
 class BufferManager:

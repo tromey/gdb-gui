@@ -14,10 +14,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import gdb
-import gui.events
-import gui.adapt
-import gui.invoker
 
+import gui.adapt
+import gui.events
+import gui.invoker
 from gui.startup import in_gdb_thread
 
 _last_selected_frame = None

@@ -15,14 +15,15 @@
 
 # Toplevel handling.
 
+import threading
+
 import gdb
+from gi.repository import Pango
+
 import gui.gdbutil
 import gui.params
 import gui.startup
 import gui.storage
-import threading
-
-from gi.repository import Pango
 from gui.startup import in_gdb_thread, in_gtk_thread
 
 

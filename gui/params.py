@@ -17,12 +17,12 @@
 
 import gdb
 import gdb.prompt
+from gi.repository import GtkSource, Pango
+
 import gui.startup
 import gui.storage
 import gui.toplevel
-
 from gui.startup import in_gdb_thread, in_gtk_thread
-from gi.repository import GtkSource, Pango
 
 
 class _SetBase(gdb.Command):
