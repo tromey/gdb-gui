@@ -1,4 +1,4 @@
-# Copyright (C) 2013, 2015 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2013, 2015, 2024 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,11 +15,19 @@
 
 import os.path
 
+import gi
+
+
+gi.require_version("Gtk", "3.0")
+gi.require_version("GtkSource", "3.0")
+gi.require_version("Notify", "0.7")
+
 self_dir = os.path.abspath(os.path.dirname(__file__))
 
 # Import anything that defines a command or parameter.
 import gui.commands
 import gui.framecache
+
 # Hooks in to gdb.
 import gui.notify
 import gui.params

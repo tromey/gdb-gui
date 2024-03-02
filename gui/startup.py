@@ -1,4 +1,4 @@
-# Copyright (C) 2012, 2013, 2015, 2023 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2012, 2013, 2015, 2023, 2024 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,12 +20,7 @@ import threading
 
 import gdb
 import gi
-
 import gui
-
-gi.require_version("Gtk", "3.0")
-gi.require_version("GtkSource", "3.0")
-gi.require_version("Notify", "0.7")
 
 from gi.repository import Gdk, GdkPixbuf, GLib, GObject, Gtk, GtkSource
 
