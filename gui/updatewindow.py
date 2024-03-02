@@ -1,4 +1,4 @@
-# Copyright (C) 2013, 2015 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2013, 2015, 2024 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ class UpdateWindow(Toplevel):
     @in_gdb_thread
     def _disconnect_events(self):
         gdb.events.stop.disconnect(self._on_event)
-        gui.event.frame_changed.disconnect(self._on_event)
+        gui.events.frame_changed.disconnect(self._on_event)
 
     @in_gdb_thread
     def _on_event(self, *args):
