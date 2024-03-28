@@ -228,7 +228,7 @@ class GuiDprintfCommand(GuiPrintBase):
         if not arg.startswith(","):
             raise gdb.GdbError("comma expected after linespec")
         arg = arg[1:]
-        spec = arg[0:-len(arg)]
+        spec = arg[0 : -len(arg)]
         gui.dprintf.DPrintfBreakpoint(spec, window, arg)
 
 
