@@ -5,4 +5,10 @@ repos:
     rev: 25.11.0
     hooks:
       - id: black
-        files: 'gui/.*'
+        files: 'gui/.*\.py'
+  - repo: https://github.com/pycqa/isort
+    rev: 7.0.0
+    hooks:
+    - id: isort
+      types_or: [file]
+      files: '^gui/.*\.py'

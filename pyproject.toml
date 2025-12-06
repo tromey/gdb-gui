@@ -1,5 +1,5 @@
 [tool.black]
-include = "\\.py(\\.in)?$"
+include = "\\.py?$"
 
-[tool.pyright]
-typeCheckingMode = "strict"
+[tool.isort]
+profile = "black"

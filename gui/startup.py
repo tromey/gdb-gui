@@ -20,9 +20,9 @@ import threading
 
 import gdb
 import gi
-import gui
-
 from gi.repository import Gdk, GdkPixbuf, GLib, GObject, Gtk, GtkSource
+
+import gui
 
 (read_pipe, write_pipe) = os.pipe()
 
