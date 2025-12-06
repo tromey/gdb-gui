@@ -1,4 +1,4 @@
-# Copyright (C) 2012, 2013, 2015, 2016, 2023 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2012, 2013, 2015, 2016, 2023, 2025 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -325,7 +325,7 @@ class TestCommand(gdb.Command):
         else:
             try:
                 super(TestCommand, self).invoke(arg, from_tty)
-            except:
+            except Exception:
                 pass
 
 

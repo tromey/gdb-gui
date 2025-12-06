@@ -1,4 +1,4 @@
-# Copyright (C) 2013, 2015, 2024 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2013, 2015, 2024, 2025 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,10 +24,10 @@ gi.require_version("Notify", "0.7")
 self_dir = os.path.abspath(os.path.dirname(__file__))
 
 # Import anything that defines a command or parameter.
-import gui.commands
-import gui.framecache
+import gui.commands  # noqa: E402
+import gui.framecache  # noqa: E402
 
 # Hooks in to gdb.
-import gui.notify
-import gui.params
-import gui.toplevel
+import gui.notify  # noqa: E402
+import gui.params  # noqa: E402
+import gui.toplevel  # noqa: E402, F401

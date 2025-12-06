@@ -6,6 +6,13 @@ repos:
     hooks:
       - id: black
         files: 'gui/.*\.py'
+  - repo:  https://github.com/pycqa/flake8
+    rev: 7.3.0
+    hooks:
+    - id: flake8
+      types_or: [file]
+      files: '^gui/.*\.py'
+      args: [--config, setup.cfg]
   - repo: https://github.com/pycqa/isort
     rev: 7.0.0
     hooks:

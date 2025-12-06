@@ -1,4 +1,4 @@
-# Copyright (C) 2015, 2023 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2015, 2023, 2025 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,7 +41,6 @@ gui_prompt_substitutions["W"] = _prompt_window
 # GDB's API should do this...
 def substitute_prompt_with_window(prompt, window):
     global _current_window_for_prompt
-    global gui_prompt_substitutions
     save = gdb.prompt.prompt_substitutions
     _current_window_for_prompt = window
     gdb.prompt.prompt_substitutions = gui_prompt_substitutions
@@ -56,7 +55,6 @@ def substitute_prompt_with_window(prompt, window):
 # GDB's API should do this...
 def prompt_help_with_window(window):
     global _current_window_for_prompt
-    global gui_prompt_substitutions
     save = gdb.prompt.prompt_substitutions
     _current_window_for_prompt = window
     gdb.prompt.prompt_substitutions = gui_prompt_substitutions

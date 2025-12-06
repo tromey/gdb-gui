@@ -1,4 +1,4 @@
-# Copyright (C) 2012, 2013, 2015, 2023, 2024 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2012, 2013, 2015, 2023, 2024, 2025 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@ import queue
 import threading
 
 import gdb
-import gi
 from gi.repository import Gdk, GdkPixbuf, GLib, GObject, Gtk, GtkSource
 
 import gui
@@ -37,14 +36,12 @@ def send_to_gtk(func):
 
 class _GtkThread(gdb.Thread):
     def handle_queue(self, source, condition):
-        global _event_queue
         os.read(source, 1)
         func = _event_queue.get()
         func()
         return True
 
     def run(self):
-        global read_pipe
         GObject.io_add_watch(read_pipe, GObject.IO_IN, self.handle_queue)
         GObject.type_register(GtkSource.View)
         Gtk.main()

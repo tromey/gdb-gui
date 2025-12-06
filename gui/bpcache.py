@@ -1,4 +1,4 @@
-# Copyright (C) 2015 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2015, 2025 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ def _breakpoint_created(bp):
     gui.adapt.notify_bug(18385)
     try:
         (rest, locs) = gdb.decode_line(bp.location)
-    except:
+    except Exception:
         return
     if rest is not None:
         # Let's assume we couldn't reparse for some reason.

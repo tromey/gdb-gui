@@ -1,4 +1,4 @@
-# Copyright (C) 2012, 2013, 2015, 2023, 2024 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2012, 2013, 2015, 2023, 2024, 2025 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ class BufferManager:
         buff.begin_not_undoable_action()
         try:
             contents = open(filename).read()
-        except:
+        except Exception:
             return None
         buff.set_text(contents)
         buff.end_not_undoable_action()

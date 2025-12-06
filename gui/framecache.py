@@ -1,4 +1,4 @@
-# Copyright (C) 2015 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2015, 2025 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ def check_frame():
     sel = None
     try:
         sel = gdb.selected_frame()
-    except:
+    except Exception:
         pass
     if _last_selected_frame is not sel:
         _last_selected_frame = sel

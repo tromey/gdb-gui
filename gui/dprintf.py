@@ -1,4 +1,4 @@
-# Copyright (C) 2013 Tom Tromey <tom@tromey.com>
+# Copyright (C) 2013, 2025 Tom Tromey <tom@tromey.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ class DPrintfBreakpoint(gdb.Breakpoint):
 
         try:
             text = gdb.execute(self.command, False, True)
-        except something:
+        except Exception as something:
             text = something
         window.append(text)
 
